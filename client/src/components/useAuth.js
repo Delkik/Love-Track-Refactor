@@ -7,9 +7,10 @@ export default function useAuth(code){
     const [expiresIn, setExpiresIn] = useState();
     var fetch_count = 0
     useEffect(() => {
-        fetch("http://127.0.0.1:5000/spotify", {
+        fetch("http://localhost:5000/spotify", {
             method: 'POST',
-            body: code
+            body: code,
+            credentials:"include"
         })
         .then(async res => {
             const data = await res.json()
@@ -30,9 +31,10 @@ export default function useAuth(code){
         if (!refreshToken || !expiresIn) return
         
         const interval = setInterval(async () => {
-            fetch("http://127.0.0.1:5000/refresh", {
+            fetch("http://localhost:5000/refresh", {
                 method: 'POST',
-                body: refreshToken
+                body: refreshToken,
+                credentials:"include"
             })
             .then(async res => {
                 const data = await res.json()
