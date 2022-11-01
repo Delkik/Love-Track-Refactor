@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth"
 import NewUser from "./NewUser";
+import { Navigate } from "react-router-dom";
 
 export default function RedirectUser({code}) {
     const [userId, setUserId] = useState();
@@ -50,8 +51,9 @@ export default function RedirectUser({code}) {
         return <div>BRUH</div>
     }
 
-    if (!userData){
-        return "hi"
+    if (userData){
+        window.history.pushState({}, null, "/")
+        return <Navigate to="/home" state={userData}/>
     }
     else{
         return (<NewUser spotifyId={userId}/>)

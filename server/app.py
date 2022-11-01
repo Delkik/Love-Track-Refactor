@@ -39,13 +39,6 @@ def create_auth():
         client_secret=SPOTIFY_CLIENT_SECRET,
         redirect_uri=REDIRECT)
 
-def get_token():
-    token_info = session.get(TOKEN_INFO, None)
-    if not token_info:
-        raise "No Session!"
-    now = int(time.time())
-    is_expired = token_info['expires_at'] - now < 60
-
 @app.route("/current_user", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def current_user():

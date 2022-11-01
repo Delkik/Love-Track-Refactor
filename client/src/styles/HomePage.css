@@ -1,0 +1,50 @@
+.header{
+    width: 100%;
+    display: flex;
+    padding-top: 20px;
+    align-items: center;
+}
+
+.header_item{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+
+.profile{
+    border-radius: 50%;
+    padding-left: 100px;
+}
+
+.profile_img{
+    border-radius: 50%;
+}
+
+.titleBtn{
+    margin: 0;
+    line-height: 1.15;
+    font-size: 1.4rem;
+    text-align: center;
+}
+.matching{
+    margin-top: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.matching_text{
+    margin-bottom: 20px;
+    height: 265px;
+    display: flex;
+    justify-content: center;
+}
+.Nav_Bar{
+    position: relative;
+    bottom: 0;
+    height: 10.5%;
+}
+.Nav_Bar img{
+    width: 10%;
+    margin: 7%;
+}

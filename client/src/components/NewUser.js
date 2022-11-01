@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import NewUser1 from "./NewUser1";
 import NewUser2 from "./NewUser2";
 import NewUser3 from "./NewUser3";
+import { Navigate } from "react-router-dom";
 
 export default function NewUser({spotifyId}){
     const [newPage, setNewPage] = useState(1);
@@ -58,11 +59,11 @@ export default function NewUser({spotifyId}){
         })
         .then(async res => {
             const data = await res.json();
-        })
+            return <Navigate to="/home"/>
+    })
         .catch(err => {
             console.log(err)
         })
-
     }
     return (<div>NewUser</div>)
 }

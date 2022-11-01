@@ -1,0 +1,20 @@
+.nav-profile_img{
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+}
+
+.nav-main{
+    display: flex;
+    background-color: gray;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-main_item{
+    margin-left: 5%;
+    margin-right: 5%;
+}
