@@ -7,6 +7,8 @@ import {
 import Main from './main';
 import HomePage from './home';
 import Match from './match';
+import Social from './social';
+import Profile from './profile';
 
 function App() {
 
@@ -17,6 +19,8 @@ function App() {
             <Route path="/" element={<Main/>} />
             <Route path="/home" element={<HomePage/>} />
             <Route path="/match" element={<Match/>} />
+            <Route path="/social" element={<Social/>} />
+            <Route path="/profile" element={<Profile/>} />
           </Routes>
       </Router>
     </div>

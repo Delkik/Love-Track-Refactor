@@ -1,6 +1,7 @@
-import { useRouter } from "next/router";
 import Navtab from "../components/Navtab";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import "../styles/profile.css"
 
 export default function Profile(){
 	// const [data, setData] = useState();
@@ -13,6 +14,17 @@ export default function Profile(){
 	// 		router.push("/")
 	// 	}
 	// }, [terminalPayload])
+    const {state} = useLocation();
+    const data = state
+    console.log(data)
+
+    const interests = [
+        "Gaming",
+        "Tennis",
+        "Racing",
+        "Fishing",
+        "Water",
+    ]
 
 
     return (
@@ -25,27 +37,29 @@ export default function Profile(){
 				<div>
 				<div className='pro'>
 					<span>
-					{terminalPayload.name}
+					{data.name}
 					</span>
 					<span>
 					, 
 					</span>
 					<span>
-					{terminalPayload.age}
+					{data.age}
 					</span>
 				</div>
-				<p className='occupation'> {terminalPayload.occupation ? terminalPayload.occupation : "Occupation"}</p>
-				<p className='companyName'> {terminalPayload.occupation ? terminalPayload.occupation : "Company"}</p>
+				<p className='occupation'> {data.occupation ? data.occupation : "Occupation"}</p>
+				<p className='companyName'> {data.occupation ? data.occupation : "Company"}</p>
 				</div>
 				<div className='about'>
-				<h3>About me</h3>
-				<p>Write something here! </p>
-				</div>
-				<div className='interests'>
-				<h3>My Interests</h3>
-				<p>Interest 01</p> 
-				<p>Interest 02</p>
-				<p>Interest 03</p>
+                    <h3>About me</h3>
+                    <p>Write something here! </p>
+                </div>
+                <div className='interests'>
+                    <h3>My Interests</h3>
+                    {
+                        interests.map((interest) => {
+                            return (<p>{interest}</p>)
+                        })
+                    }
 				</div>
 			</div>
             <Navtab data={data}/>

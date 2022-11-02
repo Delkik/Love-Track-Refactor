@@ -21,13 +21,10 @@ export default function Navtab({data}){
                 <div className="nav-main_item" onClick = {(event) => {passData(event, "/match")}}>
                     <img src={chat} alt="chat" />
                 </div>
-                <div className="nav-main_item" // onClick = {(event) => {passData(event, "/social")}}
-                >
+                <div className="nav-main_item" onClick = {(event) => {passData(event, "/social")}}>
                     <img src={social} alt="social" />
                 </div>
-                <div className="nav-main_item"
-                // onClick = {(event) => {passData(event, "/profile")}}
-                >
+                <div className="nav-main_item" onClick = {(event) => {passData(event, "/profile")}}>
                     <img className="nav-profile_img" src={profile} alt="Profile" />
                 </div>
 
