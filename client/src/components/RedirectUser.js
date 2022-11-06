@@ -53,6 +53,7 @@ export default function RedirectUser({code}) {
 
     if (userData){
         window.history.pushState({}, null, "/")
+        Object.assign(userData,{accessToken:accessToken})
         return <Navigate to="/home" state={userData}/>
     }
     else{
