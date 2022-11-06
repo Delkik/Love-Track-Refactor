@@ -12,7 +12,7 @@ from flask_cors import CORS, cross_origin
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
-scope = "user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state"
+scope = "streaming user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state"
 
 DB_USER = os.environ.get("DB_USER")
 REDIRECT = os.environ.get("REDIRECT")
@@ -83,9 +83,9 @@ def refresh():
 @app.route("/spotify", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def spotify():
-    code = request.args.get("code")
+    code = request.data.decode("utf-8")
     sp = create_auth()
-    
+
     session.clear()
 
     token_info = sp.get_access_token(code)
