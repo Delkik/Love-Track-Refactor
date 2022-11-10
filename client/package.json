@@ -9,9 +9,12 @@
     "bootstrap": "^5.2.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
+    "react-bootstrap-range-slider": "^3.0.8",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
+    "react-spotify-web-playback": "^0.10.0",
+    "socketio": "^1.0.0",
     "universal-cookie": "^4.0.4",
     "web-vitals": "^2.1.4"
   },
@@ -38,5 +41,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/socket.io-client": "^3.0.0"
   }
 }

@@ -9,6 +9,9 @@ import HomePage from './home';
 import Match from './match';
 import Social from './social';
 import Profile from './profile';
+import Music from './Music';
+import Chat from './Chat'
+import Settings from './settings';
 
 function App() {
 
@@ -21,6 +24,9 @@ function App() {
             <Route path="/match" element={<Match/>} />
             <Route path="/social" element={<Social/>} />
             <Route path="/profile" element={<Profile/>} />
+            <Route path="/music" element={<Music/>}/>
+            <Route path="/chat" element={<Chat/>}/>
+            <Route path="/settings" element={<Settings/>}/>
           </Routes>
       </Router>
     </div>

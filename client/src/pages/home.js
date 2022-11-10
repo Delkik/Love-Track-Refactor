@@ -23,9 +23,12 @@ export default function HomePage(){
             <p>LoveTrack</p>
             </div>
             <div >
+            <Link to="/music">
               <div className="matching">
                 <img src={match} alt="Start Matching" />
               </div>
+              </Link>
+
               <div className="matching_text">
                 <p>Start Matching?</p>
               </div>

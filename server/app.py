@@ -9,10 +9,11 @@ from datetime import time
 from dotenv import load_dotenv, find_dotenv
 from flask import Flask, make_response, session, request, Response
 from flask_cors import CORS, cross_origin
+from flask_socketio import SocketIO, send 
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
-scope = "user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state"
+scope = "streaming user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state"
 
 DB_USER = os.environ.get("DB_USER")
 REDIRECT = os.environ.get("REDIRECT")
@@ -30,7 +31,17 @@ CORS(app)
 
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
+socketio = SocketIO(app, cors_allowed_origins = "http://localhost:3000")
+app.debug = True
+socketio.run(app)
 TOKEN_INFO = "code"
+
+@socketio.on("message")
+def handle_message(message):
+    print("Received message: " + message)
+    print("I have been triggered")
+    send(message, broadcast=True)
+    return None
 
 def create_auth():
     return SpotifyOAuth(
@@ -83,9 +94,9 @@ def refresh():
 @app.route("/spotify", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def spotify():
-    code = request.args.get("code")
+    code = request.data.decode("utf-8")
     sp = create_auth()
-    
+
     session.clear()
 
     token_info = sp.get_access_token(code)
@@ -111,3 +122,4 @@ def user():
 
 if __name__ == "__main__":
     app.run("127.0.0.1")
+ 

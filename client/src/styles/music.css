@@ -1,0 +1,44 @@
+.name{
+    text-align: center;
+    margin-top: 9%;
+}
+
+.container{
+    margin-top: 60%;
+}
+.mess{
+    text-align: center;
+}
+.cover{
+    width: 30%;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.cover:hover{
+    width:21%;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.rightNext{
+    width: 13%;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.rightNext:hover{
+    width: 9%;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.chat{
+    width: 8%;
+    height:8%;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}

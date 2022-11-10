@@ -1,9 +1,9 @@
 import io from 'socket.io-client' //used to establish connection from front end to backend
 import React, {useState} from 'react';
 import Chat from './chatBox';
-import styles from '/styles/chatBox.module.css'
+import styles from '/styles/chatBox.css'
 
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect("http://localhost:5000");
 
 function ChatPage(){
     const [username, setUsername] = useState("");
