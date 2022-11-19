@@ -1,13 +1,11 @@
 import Navtab from "../components/Navtab";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Settings(){
-    const {state} = useLocation();
-    const data = state
-    console.log(data)
 
-
+    let data = useSelector(state => state.user.value)
 
     return (
         <div>

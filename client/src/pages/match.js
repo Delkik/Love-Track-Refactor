@@ -1,15 +1,13 @@
 import Navtab from "../components/Navtab";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import "../styles/match.css"
 
 export default function Match(){
 	// const [data, setData] = useState();
 	const [pythonData, setPythonData] = useState();
-
-    const {state} = useLocation();
-    const data = state
-    console.log(data)
+    let data = useSelector(state => state.user.value)
 
     const users = [
         {name:"Lana Rose", picture:"hi", preview:"DTF? (Down to Fish)"},
@@ -45,17 +43,19 @@ export default function Match(){
             </div>
             <div className='chats'>
                 {
-                    users.map((chat) => {
+                    users.map((chat, idx) => {
                     return (
-                        <div className='chat'>
+                        <div key={idx} className='chat'>
                             <table>
-                                <tr>
-                                    <td rowSpan={2}> {chat.picture}</td>
-                                    <td className='name'>{chat.name}</td>
-                                </tr>
-                                <tr>
-                                    <td className='message'>{chat.preview}</td>
-                                </tr>
+                                <tbody>
+                                    <tr>
+                                        <td rowSpan={2}> {chat.picture}</td>
+                                        <td className='name'>{chat.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className='message'>{chat.preview}</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     )
@@ -63,7 +63,7 @@ export default function Match(){
                 }
             </div>
         </div>
-            <Navtab data={data}/>
+            <Navtab/>
         </div>
     )
 }

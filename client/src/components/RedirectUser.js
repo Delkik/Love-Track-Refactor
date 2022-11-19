@@ -2,13 +2,18 @@ import { useEffect, useState } from "react";
 import useAuth from "./useAuth"
 import NewUser from "./NewUser";
 import { Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../redux/user";
 
 export default function RedirectUser({code}) {
     const [userId, setUserId] = useState();
     const [userType, setUserType] = useState();
     const [userExists, setUserExists] = useState();
-    const [userData, setUserData] = useState();
+    // const [userData, setUserData] = useState();
+    let userData = useSelector(state => state.user.value)
     const accessToken = useAuth(code);
+    
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (!accessToken) return
@@ -34,7 +39,7 @@ export default function RedirectUser({code}) {
         })
         .then(async res => {
             const data = await res.json();
-            setUserData(data.user)
+            dispatch(setUser(data))
             setUserExists(data.user!=undefined)
         })
         .catch(err => {
@@ -53,7 +58,7 @@ export default function RedirectUser({code}) {
 
     if (userData){
         window.history.pushState({}, null, "/")
-        return <Navigate to="/home" state={userData}/>
+        return <Navigate to="/home"/>
     }
     else{
         return (<NewUser spotifyId={userId}/>)

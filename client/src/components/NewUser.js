@@ -3,9 +3,12 @@ import NewUser1 from "./NewUser1";
 import NewUser2 from "./NewUser2";
 import NewUser3 from "./NewUser3";
 import { Navigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/user";
 
 export default function NewUser({spotifyId}){
     const [newPage, setNewPage] = useState(1);
+    const dispatch = useDispatch();
 
     const [data1, setData1] = useState({});
     const [data2, setData2] = useState({});
@@ -59,6 +62,7 @@ export default function NewUser({spotifyId}){
         })
         .then(async res => {
             const data = await res.json();
+            dispatch(setUser(data))
             return <Navigate to="/home"/>
     })
         .catch(err => {

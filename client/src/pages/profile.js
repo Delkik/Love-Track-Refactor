@@ -1,22 +1,13 @@
 import Navtab from "../components/Navtab";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import "../styles/profile.css"
 
 export default function Profile(){
-	// const [data, setData] = useState();
 
-	// useEffect(() => {
-	// 	if (JSON.stringify(terminalPayload)!="{}"){
-	// 		setData(terminalPayload)
-	// 	}
-	// 	else{
-	// 		router.push("/")
-	// 	}
-	// }, [terminalPayload])
-    const {state} = useLocation();
-    const data = state
-    console.log(data)
+    let data = useSelector(state => state.user.value)
+	console.log(data)
 
     const interests = [
         "Gaming",
@@ -37,13 +28,13 @@ export default function Profile(){
 				<div>
 				<div className='pro'>
 					<span>
-					{data.name}
+					{data.user.name}
 					</span>
 					<span>
 					, 
 					</span>
 					<span>
-					{data.age}
+					{data.user.age}
 					</span>
 				</div>
 				<p className='occupation'> {data.occupation ? data.occupation : "Occupation"}</p>
@@ -62,7 +53,7 @@ export default function Profile(){
                     }
 				</div>
 			</div>
-            <Navtab data={data}/>
+            <Navtab/>
         </div>
     )
 }
