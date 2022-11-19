@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setTokens } from "../redux/tokens";
 
 
 export default function useAuth(code){
-    const [accessToken, setAccessToken] = useState();
-    const [refreshToken, setRefreshToken] = useState();
-    const [expiresIn, setExpiresIn] = useState();
+    const dispatch = useDispatch()
+    let tokens = useSelector(state => state.tokens.value)
+
     var fetch_count = 0
     useEffect(() => {
         fetch("http://localhost:5000/spotify", {
@@ -14,45 +16,41 @@ export default function useAuth(code){
         })
         .then(async res => {
             const data = await res.json()
-            // console.log(data)
-            setAccessToken(data.accessToken)
-            setRefreshToken(data.refreshToken)
-            setExpiresIn(data.expiresIn)
+            dispatch(setTokens({accessToken: data.accessToken, refreshToken: data.refreshToken, expiresIn: data.expiresIn})) // setTokens is not a function??
             // window.history.pushState({}, null, "/")
+            
         })
         .catch(err => {
-            window.location = '/'
+            console.log(err)
+            // window.location = '/'
         })
         fetch_count +=1
     }, [code])
-
     var refresh_count = 0
     useEffect(() => {
-        if (!refreshToken || !expiresIn) return
+        if (!tokens.refreshToken || !tokens.expiresIn) return
         
         const interval = setInterval(async () => {
             fetch("http://localhost:5000/refresh", {
                 method: 'POST',
-                body: refreshToken,
+                body: tokens.refreshToken,
                 credentials:"include"
             })
             .then(async res => {
                 const data = await res.json()
+                console.log(tokens)
                 // console.log(data)
-                setAccessToken(data.accessToken)
-                setExpiresIn(data.expiresIn)
+                dispatch(setTokens({accessToken: data.accessToken, refreshToken: tokens.refreshToken, expiresIn: data.expiresIn}))        
             })
             .catch(err => {
                 window.location = '/'
             })
-            
-            // refresh_count+=1
 
-        }, (expiresIn - 60) * 1000)
+        }, (tokens.expiresIn - 60) * 1000)
         
         return () => clearInterval(interval);
 
-    }, [refreshToken, expiresIn])
+    }, [tokens.refreshToken, tokens.expiresIn])
 
-    return accessToken
+    return tokens.accessToken
 }

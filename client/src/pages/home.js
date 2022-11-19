@@ -4,11 +4,14 @@ import { Link, useLocation } from "react-router-dom";
 import "../styles/HomePage.css"
 import settings from "../images/settings_button.png"
 import match from "../images/matching_button.png"
+import { useSelector } from "react-redux";
 
 export default function HomePage(){
     const {state} = useLocation();
-    const data = state
-    console.log(data)
+    // const user = useSelector(state => state.user.value)
+    const tokens = useSelector(state => state.tokens.value)
+    // console.log(user, tokens)
+    console.log(tokens)
 
     return (
       	<div>
@@ -30,7 +33,7 @@ export default function HomePage(){
                 <p>Start Matching?</p>
               </div>
             </div>
-			<Navtab data={data}/>
+			<Navtab/>
       	</div>  
 	)
 }
