@@ -3,6 +3,7 @@ import os
 from pymongo import MongoClient
 import spotipy
 import uuid
+import requests
 
 from bson.json_util import dumps
 from datetime import time
@@ -25,15 +26,21 @@ authMechanism = "DEFAULT"
 
 mongo_uri = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@{DB_CLUSTER_URL}/?authMechanism={authMechanism}"
 
-
+base_url = "https://api.musixmatch.com/ws/1.1/"
+api_key = "&apikey=b47d930cf4a671795d7ab8b83fd74471"
 app = Flask(__name__)
 CORS(app)
+cors = CORS(app, resource={
+    r"/*":{
+        "origins":"*"
+    }
+})
 
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
-socketio = SocketIO(app, cors_allowed_origins = "http://localhost:3000")
-app.debug = True
-socketio.run(app)
+socketio = SocketIO(app)
+#app.debug = True
+
 TOKEN_INFO = "code"
 
 @socketio.on("message")
@@ -57,6 +64,19 @@ def current_user():
     client = spotipy.client.Spotify(auth=token_info["access_token"])
     user = client.me()
     return json.dumps({"user":user})
+
+
+
+@app.route("/get_lyrics", methods=['GET'])
+def getLyrics():
+    url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
+    r = requests.get(url)
+    data = r.json()
+    data = data['message']['body']
+    return data['lyrics']['lyrics_body']
+
+
+
 
 @app.route("/create_user", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -122,4 +142,6 @@ def user():
 
 if __name__ == "__main__":
     app.run("127.0.0.1")
+    #socketio.init_app(app, cors_allowed_origins="*")
+    #socketio.run(app)
  
