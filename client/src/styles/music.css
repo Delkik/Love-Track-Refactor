@@ -1,0 +1,44 @@
+.music-name{
+    text-align: center;
+    margin-top: 9%;
+}
+
+.music-container{
+    margin-top: 60%;
+}
+.music-mess{
+    text-align: center;
+}
+.music-cover{
+    width: 30%;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.music-cover:hover{
+    width:21%;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.music-rightNext{
+    width: 13%;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.music-rightNext:hover{
+    width: 9%;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.music-chat{
+    width: 8%;
+    height:8%;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
