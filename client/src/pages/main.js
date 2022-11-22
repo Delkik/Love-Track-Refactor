@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 export default function Main(){
 
     let tokens = useSelector(state => state.tokens.value)
+
     if (tokens){
         return <RedirectUser code={tokens.accessToken}/>
     }

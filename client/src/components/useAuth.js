@@ -6,6 +6,7 @@ import { setTokens } from "../redux/tokens";
 export default function useAuth(code){
     const dispatch = useDispatch()
     let tokens = useSelector(state => state.tokens.value)
+    console.log(code)
 
     var fetch_count = 0
     useEffect(() => {
@@ -16,7 +17,7 @@ export default function useAuth(code){
         })
         .then(async res => {
             const data = await res.json()
-            dispatch(setTokens({accessToken: data.accessToken, refreshToken: data.refreshToken, expiresIn: data.expiresIn})) // setTokens is not a function??
+            dispatch(setTokens({accessToken: data.accessToken, refreshToken: data.refreshToken, expiresIn: data.expiresIn}))
             // window.history.pushState({}, null, "/")
             
         })

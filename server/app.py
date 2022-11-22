@@ -12,7 +12,7 @@ from flask_cors import CORS, cross_origin
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
-scope = "streaming user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state"
+scope = "streaming user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state web-playback"
 
 DB_USER = os.environ.get("DB_USER")
 REDIRECT = os.environ.get("REDIRECT")
@@ -110,4 +110,4 @@ def user():
     return dumps({"user":user})
 
 if __name__ == "__main__":
-    app.run("127.0.0.1")
+    app.run()
