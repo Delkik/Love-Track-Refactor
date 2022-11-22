@@ -73,7 +73,7 @@ def getLyrics():
     r = requests.get(url)
     data = r.json()
     data = data['message']['body']
-    return data['lyrics']['lyrics_body']
+    return {"lyric":data['lyrics']['lyrics_body']}
 
 
 

@@ -5,14 +5,16 @@ import "../styles/lyrics.css"
 
 
 export default function Lyrics(){
-    const [lyrics, setLyrics] = useState("Tumi shonar pakhi...")
+    const [lyrics, setLyrics] = useState("")
 
     const onChangeValue = (e) => {
-        fetch("http://localhost:5000/get_lyrics", {
+        fetch("/get_lyrics", {
             method: "GET"
         })
         .then(async res => {
-            const data = await res.json();
+            console.log("this is the lyrics data")
+            console.log(await res.text())
+            const data = res.json();
             setLyrics(data)
             return data
         }).catch(error=>{
