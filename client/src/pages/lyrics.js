@@ -4,22 +4,20 @@ import "../styles/lyrics.css"
 
 
 
+
 export default function Lyrics(){
     const [lyrics, setLyrics] = useState("")
 
     const onChangeValue = (e) => {
-        fetch("/get_lyrics", {
-            method: "GET"
-        })
-        .then(async res => {
+        fetch("http://localhost:5000/get_lyrics").then(async res => {
             console.log("this is the lyrics data")
-            console.log(await res.text())
-            const data = res.json();
-            setLyrics(data)
-            return data
+            console.log(res.json())
         }).catch(error=>{
             console.log(error)
           })
+       
+      
+
         console.log("im being clicked i think?")
         console.log(lyrics)
       }

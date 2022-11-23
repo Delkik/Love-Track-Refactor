@@ -8,7 +8,7 @@ import requests
 from bson.json_util import dumps
 from datetime import time
 from dotenv import load_dotenv, find_dotenv
-from flask import Flask, make_response, session, request, Response
+from flask import Flask, jsonify, make_response, session, request, Response
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, send 
 from spotipy.oauth2 import SpotifyOAuth
@@ -29,12 +29,8 @@ mongo_uri = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@{DB_CLUSTER_URL}/?authMechan
 base_url = "https://api.musixmatch.com/ws/1.1/"
 api_key = "&apikey=b47d930cf4a671795d7ab8b83fd74471"
 app = Flask(__name__)
-CORS(app)
-cors = CORS(app, resource={
-    r"/*":{
-        "origins":"*"
-    }
-})
+#CORS(app)
+cors = CORS(app, resources={r'/get_lyrics': {'origins':'http://localhost:3000/#/lyrics'}})
 
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
@@ -67,13 +63,16 @@ def current_user():
 
 
 
-@app.route("/get_lyrics", methods=['GET'])
+@app.route("/get_lyrics")
 def getLyrics():
     url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
     r = requests.get(url)
     data = r.json()
     data = data['message']['body']
-    return {"lyric":data['lyrics']['lyrics_body']}
+    print(data['lyrics']['lyrics_body'].split('\n')[2])
+    response = jsonify(lyric = data['lyrics']['lyrics_body'].split('\n')[2])
+    #response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 
