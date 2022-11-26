@@ -10,6 +10,7 @@ import Match from './match';
 import Social from './social';
 import Profile from './profile';
 import Settings from './settings';
+import Music from './music';
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
             <Route path="/social" element={<Social/>} />
             <Route path="/profile" element={<Profile/>} />
             <Route path="/settings" element={<Settings/>} />
+            <Route path="/music" element={<Music/>} />
           </Routes>
       </Router>
     </div>

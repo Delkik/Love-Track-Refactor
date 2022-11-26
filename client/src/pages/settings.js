@@ -1,6 +1,4 @@
 import Navtab from "../components/Navtab";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function Settings(){
@@ -33,7 +31,7 @@ export default function Settings(){
         </div>
 
       </div>
-            {/* <Navtab data={data}/> */}
+            <Navtab/>
         </div>
     )
 }
