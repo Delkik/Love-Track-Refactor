@@ -1,0 +1,13 @@
+.screen{
+    float: left;
+    margin-top: 6%;
+    padding: 15%;
+
+}
+
+.options{
+    display: flex;
+    align-items: center;
+    padding-bottom: 15%;
+    padding-top: 10%;
+}

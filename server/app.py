@@ -1,14 +1,16 @@
 import json 
 import os
 from pymongo import MongoClient
+import requests
 import spotipy
 import uuid
 
 from bson.json_util import dumps
 from datetime import time
-from dotenv import load_dotenv, find_dotenv
-from flask import Flask, make_response, session, request, Response
+from dotenv import load_dotenv
+from flask import Flask, jsonify, redirect, session, request
 from flask_cors import CORS, cross_origin
+from flask_socketio import SocketIO, send, emit 
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
@@ -24,13 +26,29 @@ authMechanism = "DEFAULT"
 
 mongo_uri = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@{DB_CLUSTER_URL}/?authMechanism={authMechanism}"
 
-
+base_url = "https://api.musixmatch.com/ws/1.1/"
+api_key = "&apikey=b47d930cf4a671795d7ab8b83fd74471"
 app = Flask(__name__)
 CORS(app)
 
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
+socketio = SocketIO(app,cors_allowed_origins="*")
 TOKEN_INFO = "code"
+
+@socketio.on("message")
+def handle_message(message):
+    print("Received message: " + message)
+    print("I have been triggered")
+    send(message, broadcast=True)
+    return None
+
+@socketio.on("connect")
+def connected():
+    """event listener when client connects to the server"""
+    print(request.sid)
+    print("client has connected")
+    emit("connect",{"data":f"id: {request.sid} is connected"})
 
 def create_auth():
     return SpotifyOAuth(
@@ -47,6 +65,17 @@ def current_user():
     user = client.me()
     return json.dumps({"user":user})
 
+@app.route("/get_song_words", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def getLyrics():
+    url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
+    r = requests.get(url)
+    data = r.json()
+    data = data['message']['body']
+    print(data['lyrics']['lyrics_body'].split('\n')[2])
+    response = jsonify(lyric = data['lyrics']['lyrics_body'].split('\n')[2])
+    return response
+
 @app.route("/create_user", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def create_user():
@@ -54,6 +83,22 @@ def create_user():
     client = MongoClient(mongo_uri)
     db = client["main"]
     user = db.accounts.insert_one(user_data)
+    return {}
+
+@app.route("/update_user", methods=['GET','PUT'])
+@cross_origin(supports_credentials=True)
+def update_user():
+    print("hi")
+    user_data = request.data.decode("utf-8")
+    # print(user_id)
+    # user_data = request.get_json()
+    print(user_data)
+    user_data = json.loads(user_data)
+    print(user_data)
+    user_data.pop('_id', None)
+    client = MongoClient(mongo_uri)
+    db = client["main"]
+    user = db.accounts.replace_one({"spotify_id":user_data["spotify_id"]},user_data)
     return {}
 
 @app.route("/kmeans", methods=['GET','POST'])
@@ -109,5 +154,28 @@ def user():
 
     return dumps({"user":user})
 
+@app.route("/user_tracks", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def get_tracks():
+    print("i hit the user tracks")
+    try:
+        token_info = getToken()
+    except:
+        print("not logged in")
+        return "no valid logged in user"
+    sp = spotipy.Spotify(auth = token_info['access_token'])
+    return str(sp.current_user_saved_tracks(limit=50, offset=0)['items'])
+
+def getToken():
+    token_info = session.get("token_info", None)
+    if not token_info:
+        raise "exception"
+    expired = token_info['expires_at'] - int(time.time())
+    if expired < 60:
+        oath = create_auth()
+        token_info = oath.refresh_access_token(token_info['refresh_token'])
+    return token_info
+
 if __name__ == "__main__":
-    app.run()
+    app.run("127.0.0.1")
+    socketio.run(app, debug=True,port=5000)

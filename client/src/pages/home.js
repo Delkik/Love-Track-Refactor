@@ -27,7 +27,7 @@ export default function HomePage(){
             <p>LoveTrack</p>
             </div>
             <div >
-              <button className="matching" onClick={(event) => {navigate("/music")}}>
+              <button className="matching" onClick={(event) => {navigate("/lyrics")}}>
                 <img src={match} alt="Start Matching" />
               </button>
               <div className="matching_text">
