@@ -2,7 +2,7 @@
   "name": "lovetrack",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": "http://127.0.0.1:5000/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -12,9 +12,11 @@
     "react-bootstrap": "^2.5.0",
     "react-bootstrap-range-slider": "^3.0.8",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
     "react-spotify-web-playback": "^0.10.0",
+    "socket.io-client": "^4.5.4",
     "socketio": "^1.0.0",
     "universal-cookie": "^4.0.4",
     "web-vitals": "^2.1.4"

@@ -9,7 +9,7 @@ export default function Lyrics(){
     const [lyrics, setLyrics] = useState("")
 
     const onChangeValue = (e) => {
-        fetch("http://localhost:5000/get_lyrics").then(async res => {
+        fetch("http://127.0.0.1:5000/get_song_words").then(async res => {
             console.log("this is the lyrics data")
             console.log(res.json())
         }).catch(error=>{

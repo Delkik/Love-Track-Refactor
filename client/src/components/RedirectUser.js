@@ -14,7 +14,7 @@ export default function RedirectUser({code}) {
         if (!accessToken) return
         fetch("http://localhost:5000/current_user", {
             method: "GET",
-            credentials:"include"
+            credentials:"include",
         })
         .then(async res => {
             const data = await res.json();

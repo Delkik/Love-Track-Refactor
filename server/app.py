@@ -8,9 +8,9 @@ import requests
 from bson.json_util import dumps
 from datetime import time
 from dotenv import load_dotenv, find_dotenv
-from flask import Flask, jsonify, make_response, session, request, Response
+from flask import Flask, jsonify, make_response, redirect, session, request, Response
 from flask_cors import CORS, cross_origin
-from flask_socketio import SocketIO, send 
+from flask_socketio import SocketIO, send, emit 
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
@@ -29,12 +29,12 @@ mongo_uri = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@{DB_CLUSTER_URL}/?authMechan
 base_url = "https://api.musixmatch.com/ws/1.1/"
 api_key = "&apikey=b47d930cf4a671795d7ab8b83fd74471"
 app = Flask(__name__)
-#CORS(app)
-cors = CORS(app, resources={r'/get_lyrics': {'origins':'http://localhost:3000/#/lyrics'}})
+CORS(app, resources={r"/*":{"origins":"*"}})
+#cors = CORS(app, resources={r'/get_lyrics': {'origins':'http://localhost:3000/#/lyrics'}})
 
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
-socketio = SocketIO(app)
+socketio = SocketIO(app,cors_allowed_origins="*")
 #app.debug = True
 
 TOKEN_INFO = "code"
@@ -45,6 +45,13 @@ def handle_message(message):
     print("I have been triggered")
     send(message, broadcast=True)
     return None
+
+@socketio.on("connect")
+def connected():
+    """event listener when client connects to the server"""
+    print(request.sid)
+    print("client has connected")
+    emit("connect",{"data":f"id: {request.sid} is connected"})
 
 def create_auth():
     return SpotifyOAuth(
@@ -63,7 +70,8 @@ def current_user():
 
 
 
-@app.route("/get_lyrics")
+@app.route("/get_song_words", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
 def getLyrics():
     url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
     r = requests.get(url)
@@ -85,6 +93,37 @@ def create_user():
     db = client["main"]
     user = db.accounts.insert_one(user_data)
     return {}
+
+@app.route("/getAuth")
+@cross_origin(supports_credentials=True)
+def getAuth():
+    oath = create_auth()
+    url = oath.get_authorize_url()
+    return redirect(url)
+    
+@app.route("/user_tracks", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def get_tracks():
+    print("i hit the user tracks")
+    try:
+        token_info = getToken()
+    except:
+        print("not logged in")
+        return "no valid logged in user"
+    sp = spotipy.Spotify(auth = token_info['access_token'])
+    return str(sp.current_user_saved_tracks(limit=50, offset=0)['items'])
+
+    
+
+def getToken():
+    token_info = session.get("token_info", None)
+    if not token_info:
+        raise "exception"
+    expired = token_info['expires_at'] - int(time.time())
+    if expired < 60:
+        oath = create_auth()
+        token_info = oath.refresh_access_token(token_info['refresh_token'])
+    return token_info
 
 @app.route("/kmeans", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -143,4 +182,5 @@ if __name__ == "__main__":
     app.run("127.0.0.1")
     #socketio.init_app(app, cors_allowed_origins="*")
     #socketio.run(app)
+    socketio.run(app, debug=True,port=5000)
  

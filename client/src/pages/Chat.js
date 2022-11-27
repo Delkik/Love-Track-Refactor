@@ -5,8 +5,8 @@ import "../styles/chat.css"
 import Navtab from "../components/Navtab";
 
 
-let endPoint = "http://localhost:5000"
-let socket = io.connect("http://localhost:5000")
+let endPoint = "http://127.0.0.1:5000"
+let socket = io.connect("http://127.0.0.1:5000")
 
 function Chat() {
   const {state} = useLocation();
@@ -17,6 +17,19 @@ function Chat() {
     useEffect(() => {
       getMessages()
     }, [messages.length])
+
+    useEffect(() => {
+      const socket = io("localhost:5000/", {
+        transports: ["websocket"],
+        cors: {
+          origin: "http://localhost:3000/",
+        },
+      });  
+      socket.on("connect", (data) => {
+        console.log(data);
+      });
+      
+    }, []);
 
     const onChange = e => {
       setMessage(e.target.value)
@@ -34,7 +47,7 @@ function Chat() {
         setMessage("")
         console.log("this is where i wanna be")
       }else{
-        console.log("fuck outta here")
+        console.log("ck outta here")
 
       }
     }
