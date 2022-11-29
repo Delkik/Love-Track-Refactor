@@ -10,7 +10,7 @@ from datetime import time
 from dotenv import load_dotenv, find_dotenv
 from flask import Flask, jsonify, make_response, redirect, session, request, Response
 from flask_cors import CORS, cross_origin
-from flask_socketio import SocketIO, send, emit 
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
@@ -39,11 +39,21 @@ socketio = SocketIO(app,cors_allowed_origins="*")
 
 TOKEN_INFO = "code"
 
+@socketio.on('join')
+def on_join(data):
+    room = data['room']
+    join_room(room)
+
+@socketio.on('leave')
+def on_leave(data):
+    room = data['room']
+    leave_room(room)
+    
 @socketio.on("message")
 def handle_message(message):
     print("Received message: " + message)
     print("I have been triggered")
-    send(message, broadcast=True)
+    send("data",message,broadcast=True)
     return None
 
 @socketio.on("connect")
