@@ -41,7 +41,8 @@ TOKEN_INFO = "code"
 
 @socketio.on('join')
 def on_join(data):
-    room = data['room']
+    room = data
+    print("room: " + room)
     join_room(room)
 
 @socketio.on('leave')
@@ -51,9 +52,9 @@ def on_leave(data):
     
 @socketio.on("message")
 def handle_message(message):
-    print("Received message: " + message)
+    print("Received message: " + message['ms'])
     print("I have been triggered")
-    send("data",message,broadcast=True)
+    emit('my_response', message, broadcast=True)
     return None
 
 @socketio.on("connect")
@@ -189,7 +190,7 @@ def user():
     return dumps({"user":user})
 
 if __name__ == "__main__":
-    app.run("127.0.0.1")
+    #app.run("127.0.0.1")
     #socketio.init_app(app, cors_allowed_origins="*")
     #socketio.run(app)
     socketio.run(app, debug=True,port=5000)

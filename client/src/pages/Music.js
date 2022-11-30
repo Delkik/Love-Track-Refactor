@@ -8,9 +8,11 @@ import SpotifyPlayer from "react-spotify-web-playback"
 import Navtab from "../components/Navtab";
 import { Link, useLocation } from "react-router-dom";
 import chatIcon from "../images/chatIcon.png"
+import io from "socket.io-client"
 
 
 
+let socket = io.connect("http://127.0.0.1:5001")
 
 const AUTH_URL = "https://accounts.spotify.com/authorize?client_id=80a880567794471f984b65c54380f4c4&response_type=code&redirect_uri=http://localhost:3000/#/music&scope=user-read-private%20user-read-email%20user-library-read%20user-library-modify%20user-read-playback-state%20user-modify-playback-state"
 
@@ -24,6 +26,17 @@ export default function Music(){
    
     console.log(code)
 
+    const joinRoom = () => {
+        const socket = io("localhost:5001/", {
+            transports: ["websocket"],
+            cors: {
+              origin: "http://localhost:3000/",
+            },
+          });  
+        socket.emit("join", "1234")
+        console.log("joining room?")
+      }
+
     return(
         <div>
             <div className="container">
@@ -34,7 +47,7 @@ export default function Music(){
             </div>
             </a>
             <Link to="/chat">
-            <img src={chatIcon} alt="chat" className="chat"/>
+            <img onClick={() => joinRoom()} src={chatIcon} alt="chat" className="chat"/>
             </Link>
             <img src={rightNext} alt="rightNext" className="rightNext"/>
             

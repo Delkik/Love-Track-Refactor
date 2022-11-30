@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import Chat from './chatBox';
 import styles from '/styles/chatBox.css'
 
-const socket = io.connect("http://localhost:5000");
+const socket = io.connect("http://localhost:5001");
 
 function ChatPage(){
     const [username, setUsername] = useState("");
