@@ -14,7 +14,7 @@ from flask_socketio import SocketIO, send, emit
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
-scope = "streaming user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state web-playback"
+scope = "streaming user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state"
 
 DB_USER = os.environ.get("DB_USER")
 REDIRECT = os.environ.get("REDIRECT")
@@ -83,18 +83,17 @@ def create_user():
     client = MongoClient(mongo_uri)
     db = client["main"]
     user = db.accounts.insert_one(user_data)
+    likes = db.likes.insert_one({
+        "user":user_data["spotify_id"],
+        "liked":[]
+    })
     return {}
 
 @app.route("/update_user", methods=['GET','PUT'])
 @cross_origin(supports_credentials=True)
 def update_user():
-    print("hi")
     user_data = request.data.decode("utf-8")
-    # print(user_id)
-    # user_data = request.get_json()
-    print(user_data)
     user_data = json.loads(user_data)
-    print(user_data)
     user_data.pop('_id', None)
     client = MongoClient(mongo_uri)
     db = client["main"]
@@ -104,6 +103,7 @@ def update_user():
 @app.route("/kmeans", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def kmeans():
+    
     return {"kmeans":"kmeans"}
 
 @app.route("/refresh", methods=['GET','POST'])
@@ -157,14 +157,62 @@ def user():
 @app.route("/user_tracks", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def get_tracks():
-    print("i hit the user tracks")
+    sp = None
     try:
-        token_info = getToken()
+        token_info = session.get(TOKEN_INFO, None)
+        sp = spotipy.Spotify(auth = token_info['access_token'])
     except:
-        print("not logged in")
-        return "no valid logged in user"
-    sp = spotipy.Spotify(auth = token_info['access_token'])
-    return str(sp.current_user_saved_tracks(limit=50, offset=0)['items'])
+        return {"msg":"no valid logged in user"}
+    print(str(sp.current_user_saved_tracks(limit=50, offset=0)['items']))
+    l = []
+    for j in range(10):
+        songs = sp.current_user_saved_tracks(limit=50, offset=j*50)['items']
+        for i in songs:
+            print(i)
+            if i in l:
+                return dumps(l)
+            l.append(i)
+    return dumps(l)
+
+@app.route("/posts", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def posts():
+    # if GET, return number of likes
+    # if POST, return and add to db
+    client = MongoClient(mongo_uri)
+    db = client["main"]
+    posts = db.posts
+    if request.method == "GET":
+        return dumps(posts.find().limit(30))
+    return {}
+
+@app.route("/posts/<id>/comment", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def comment(id):
+    comment = request.data.decode("utf-8")
+    client = MongoClient(mongo_uri)
+    db = client["main"]
+    post = db.posts.find_one({"post_id":id})
+    post.comments.append(comment)
+    return db.posts.replace_one({"post_id":id},post)
+
+@app.route("/posts/<id>/like", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def like(id):
+    user_id = request.data.decode("utf-8")
+    client = MongoClient(mongo_uri)
+    db = client["main"]
+    user = db.likes.find_one({"user":user_id})
+    post = db.posts.find_one({"post_id":id})
+    if user and id in user["liked"]:
+        user["liked"].remove(id)
+        post["likes"]-=1
+    else:
+        user["liked"].append(id)
+        post["likes"]+=1
+    db.likes.replace_one({"user":user_id},user)
+    db.posts.replace_one({"post_id":id},post)
+    return dumps(db.posts.find({}).limit(30))
 
 def getToken():
     token_info = session.get("token_info", None)

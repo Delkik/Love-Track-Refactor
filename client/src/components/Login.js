@@ -1,7 +1,7 @@
 import "../styles/Login.css"
 import spotify from "../images/spotify-logo.png"
 
-const AUTH_URL = "https://accounts.spotify.com/authorize?client_id=80a880567794471f984b65c54380f4c4&response_type=code&redirect_uri=" + process.env.REACT_APP_REDIRECT + "&scope=user-read-private%20user-read-email%20user-library-read%20user-library-modify%20user-read-playback-state%20user-modify-playback-state%20streaming"
+const AUTH_URL = "https://accounts.spotify.com/authorize?client_id="+ process.env.REACT_SPOTIFY_CLIENT_ID + "&response_type=code&redirect_uri=" + process.env.REACT_APP_REDIRECT + "&scope=user-read-private%20user-read-email%20user-library-read%20user-library-modify%20user-read-playback-state%20user-modify-playback-state%20streaming"
 
 export default function Login(){
 

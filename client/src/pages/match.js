@@ -8,6 +8,7 @@ export default function Match(){
 	// const [data, setData] = useState();
 	const [pythonData, setPythonData] = useState();
     let data = useSelector(state => state.user.value)
+    console.log(data)
 
     const users = [
         {name:"Lana Rose", picture:"hi", preview:"DTF? (Down to Fish)"},
