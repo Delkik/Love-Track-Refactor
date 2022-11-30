@@ -40,19 +40,38 @@ export default function RedirectUser({code}) {
         .then(async res => {
             const data = await res.json();
             dispatch(setUser(data))
-            setUserExists(data.user!=undefined)
+            setUserExists(data.user!==undefined)
         })
         .catch(err => {
             console.log(err)
         })
     }, [accessToken, userId])
 
+    useEffect(() => {
+        if (userType !== "premium"){return}
+
+        fetch("http://localhost:5000/kmeans", {
+            method: "POST",
+            body: userId,
+            credentials:"omit"
+        })
+        .then(async res => {
+            const data = await res.json();
+            // dispatch(setUser(data))
+            // setUserExists(data.user!==undefined)
+            console.log(data)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }, [userType])
+
     // Render loading screen or something
-    if (userExists==undefined){
+    if (userExists===undefined){
         return <div>Gathering data on User...</div>
     }
 
-    if (userType != "premium"){
+    if (userType !== "premium"){
         return <div>BRUH</div>
     }
 

@@ -2,6 +2,7 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import Login from "../components/Login";
 import RedirectUser from "../components/RedirectUser";
 import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 
 export default function Main(){

@@ -35,18 +35,18 @@ export default function Profile(){
 					{data.user.age}
 					</span>
 				</div>
-				<p className='occupation'> {data.occupation ? data.occupation : "Occupation"}</p>
-				<p className='companyName'> {data.occupation ? data.occupation : "Company"}</p>
+				<p className='occupation'> {data.user.occupation ? data.user.occupation : "Occupation"}</p>
+				<p className='companyName'> {data.user.occupation ? data.user.occupation : "Company"}</p>
 				</div>
 				<div className='about'>
                     <h3>About me</h3>
-                    <p>Write something here! </p>
+                    <p>{data.user.bio === undefined || data.user.bio === "" ? "Write something here!" : data.user.bio}</p>
                 </div>
                 <div className='interests'>
                     <h3>My Interests</h3>
                     {
-                        interests.map((interest) => {
-                            return (<p>{interest}</p>)
+                        interests.map((interest, idx) => {
+                            return (<p key={idx}>{interest}</p>)
                         })
                     }
 				</div>

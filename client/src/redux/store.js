@@ -1,6 +1,7 @@
 import {configureStore, combineReducers} from "@reduxjs/toolkit"
 import tokenReducer from "./tokens"
 import userReducer from "./user"
+import postsReducer from "./posts"
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
@@ -11,19 +12,21 @@ const persistConfigUser = {
 }
 
 const persistConfigTokens = {
-    key: 'root',
-    storage,
-  }
+  key: 'root',
+  storage,
+}
+
+const persistConfigPosts = {
+  key: 'root',
+  storage,
+}
+
 
 const allReducers = combineReducers({
     user: persistReducer(persistConfigUser, userReducer),
-    tokens: persistReducer(persistConfigTokens, tokenReducer)
+    tokens: persistReducer(persistConfigTokens, tokenReducer),
+    posts: persistReducer(persistConfigPosts, postsReducer)
 });
-  
-// const persistedReducer = persistReducer(persistConfig, {
-//     tokens: tokenReducer,
-//     user: userReducer,
-// })
 
 export const store = configureStore({
     reducer: allReducers,
