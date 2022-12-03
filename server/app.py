@@ -1,9 +1,11 @@
+import base64
 import json 
 import os
 from pymongo import MongoClient
 import requests
 import spotipy
 import uuid
+import urllib
 
 from bson.json_util import dumps
 from datetime import time
@@ -11,6 +13,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, session, request
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, send, emit 
+from imgurpython import ImgurClient
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
@@ -22,6 +25,8 @@ DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_CLUSTER_URL = os.environ.get("DB_CLUSTER_URL")
 SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
+IMGUR_CLIENT_ID = os.environ.get("IMGUR_CLIENT_ID")
+IMGUR_CLIENT_SECRET = os.environ.get("IMGUR_CLIENT_SECRET")
 authMechanism = "DEFAULT"
 
 mongo_uri = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@{DB_CLUSTER_URL}/?authMechanism={authMechanism}"
@@ -173,6 +178,23 @@ def get_tracks():
                 return dumps(l)
             l.append(i)
     return dumps(l)
+
+@app.route("/upload", methods=['POST'])
+@cross_origin(supports_credentials=True)
+def upload():
+
+    file = request.files["file"]
+    headers = {"Authorization": "Client-ID "+ IMGUR_CLIENT_ID}
+
+    b64_image = base64.standard_b64encode(file.read())
+    data = {'image': b64_image, 'title': str(uuid.uuid4().hex)}
+
+    req = requests.post(url="https://api.imgur.com/3/upload.json", data=data,headers=headers)
+    print(req.json())
+    if req.status_code!=200:
+        return {"code":404}
+    link = req.json()["data"]["link"]
+    return {"code":200,"link":link}
 
 @app.route("/posts", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)

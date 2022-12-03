@@ -20,9 +20,6 @@ export default function Social(){
         })
         .then(async res => {
             let data = await res.json()
-            for (let i = 0; i < data.length; i++){
-                data[i].profile_img = justin
-            }
             dispatch(setPosts(data))
             console.log(data,"usharedfibuawelifu")
         })

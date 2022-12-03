@@ -7,17 +7,17 @@ import { persistReducer, persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 
 const persistConfigUser = {
-  key: 'root',
+  key: 'user',
   storage,
 }
 
 const persistConfigTokens = {
-  key: 'root',
+  key: 'tokens',
   storage,
 }
 
 const persistConfigPosts = {
-  key: 'root',
+  key: 'posts',
   storage,
 }
 

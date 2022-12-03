@@ -29,14 +29,10 @@ export default function Settings(){
     }
 
     const onSave = (e) => {
-      let newData = data.user
-      // console.log(newData.gender)
-      newData.gender = newGender
-      newData.name = newName
-      newData.locationRange = value
-      newData.bio = newBio
+      let newData = {...data.user,gender:newGender,name:newName,locationRange:value,bio:newBio}
       console.log(newData)
-      // dispatch(setUser({user: newData}))
+
+      dispatch(setUser({user: newData}))
       fetch("http://localhost:5000/update_user", {
         method: 'PUT',
         body: JSON.stringify(newData),
@@ -45,6 +41,7 @@ export default function Settings(){
       .then(async res => {
         const data = await res.json()
         console.log(data)
+        
         navigate("/home")
         alert("Saved!")
             // window.history.pushState({}, null, "/")
