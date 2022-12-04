@@ -73,12 +73,13 @@ def current_user():
 @app.route("/get_song_words", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def getLyrics():
+    # call user_tracks
     url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
     r = requests.get(url)
     data = r.json()
     data = data['message']['body']
     print(data['lyrics']['lyrics_body'].split('\n')[2])
-    response = jsonify(lyric = data['lyrics']['lyrics_body'].split('\n')[2])
+    response = jsonify({"lyric":data['lyrics']['lyrics_body'].split('\n')[2],"song":"Sexy and I Know It"}) #replace with song name
     return response
 
 @app.route("/create_user", methods=['GET','POST'])
@@ -206,6 +207,12 @@ def posts():
     posts = db.posts
     if request.method == "GET":
         return dumps(posts.find().limit(30))
+    else:
+        post_data = request.data.decode("utf-8")
+        print(post_data)
+        post_data = json.loads(post_data)
+        posts.insert_one(post_data)
+        return {}
     return {}
 
 @app.route("/posts/<id>/comment", methods=['GET','POST'])

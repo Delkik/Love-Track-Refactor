@@ -19,10 +19,10 @@ export default function Post({post_data, onLike, onComment}){
                     {post_data.likes}
                         <img  src={social} onClick={() => {onLike(post_data)}}/>
                     </div>
-                    <div className="post-func">
+                    {/* <div className="post-func">
                     {post_data.comments.length}
                         <img  src={chat} onClick={() => {onComment("Comment!")}}/>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
