@@ -62,7 +62,9 @@ function Chat() {
     return (
       <div>
         <h1 className='nameTitle'>Sanjida</h1>
+        <div className="chatBox">
           {messages.map(msg => (msg.sender === "Imtiaz" ? <div className='left'><p className = "left2">{msg.sender} : {msg.ms}</p></div>: <div className='right'><p className = "right2">{msg.sender} : {msg.ms}</p></div>))}
+          </div>
           
           <div className='inputField'>
           <input value = {message} name = "message" onChange={e => onChange(e)} />

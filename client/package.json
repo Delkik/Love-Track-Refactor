@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -15,6 +16,7 @@
     "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
     "react-spotify-web-playback": "^0.10.0",
+    "redux-persist": "^6.0.0",
     "simple-websocket": "^9.1.0",
     "socket.io-client": "^4.5.4",
     "socketio": "^1.0.0",

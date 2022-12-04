@@ -25,6 +25,12 @@
 }
 
 .inputField{
-    margin-top: 25%;
+    margin-top: 140%;
     margin-left: 25%;
+}
+
+.chatBox{
+    overflow: scroll;
+    height: 50%;
+    position: absolute;
 }

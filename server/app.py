@@ -115,14 +115,29 @@ def getAuth():
 @app.route("/user_tracks", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def get_tracks():
-    print("i hit the user tracks")
+    sp = None
     try:
-        token_info = getToken()
+        token_info = session.get(TOKEN_INFO, None)
+        sp = spotipy.Spotify(auth = token_info['access_token'])
     except:
-        print("not logged in")
-        return "no valid logged in user"
-    sp = spotipy.Spotify(auth = token_info['access_token'])
-    return str(sp.current_user_saved_tracks(limit=50, offset=0)['items'])
+        return {"msg":"no valid logged in user"}
+    print(str(sp.current_user_saved_tracks(limit=50, offset=0)['items']))
+    l = []
+    for j in range(10):
+        songs = sp.current_user_saved_tracks(limit=50, offset=j*50)['items']
+        for i in songs:
+            #print(i)
+            if i in l:
+                return dumps(l)
+            name = i["track"]["album"]["name"].replace(" ", "%20")
+            im = i["track"]["album"]["images"][1]["url"]
+            artist = i["track"]["album"]["artists"][0]["name"].replace(" ", "%20")
+            print("name: " + name + "  image:  " + im + " . artist:  " + artist)
+            item = {"n": name, "i":im, "a":artist}
+            #l.append(i)
+            if len(i["track"]["album"]["artists"]) == 1:
+                l.append(item)
+    return dumps(l)
 
     
 
