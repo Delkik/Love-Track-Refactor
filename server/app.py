@@ -7,13 +7,15 @@ import random
 import spotipy
 import uuid
 
+from copy import deepcopy
+
 from bson.json_util import dumps
 from datetime import time
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, session, request
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from match import kmeans
+from match import kmeans, create_genre_list, debug_create_genre_list, debug_kmeans
 from pymongo import MongoClient
 from spotipy.oauth2 import SpotifyOAuth
 
@@ -130,16 +132,20 @@ def match():
 
     client = MongoClient(mongo_uri)
     db = client["main"]
-    users = db.accounts.find({}).limit(1000)
+    bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]}},{"genres":1,"_id":0,"spotify_id":1}).limit(1000)
+    users = [i for i in bruh]
+
+    # REMOVE ALL THE UNNECCESSARY DATA FIRST
+    users.append(user_data)
 
     cluster = int(kmeans(users,TEST_USERS)["cluster"])
     user_data["cluster"] = cluster
 
-    # users = dumps(db.accounts.find({"cluster":cluster}).limit(100))
+    users = dumps(db.accounts.find({"cluster":cluster}).limit(100))
+    user = eval(users)
     db.accounts.replace_one({"spotify_id":user_data["spotify_id"]},user_data)
-    # user = eval(users)
-    # if user == []:
-    #     return json.dumps({"kmeans":{}})
+    if user == []:
+        return json.dumps({"kmeans":{}})
     return json.dumps({"kmeans":cluster})
 
 
@@ -152,14 +158,13 @@ def kmeans_train():
 
     client = MongoClient(mongo_uri)
     db = client["main"]
-    users = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]}}).limit(1000)
 
-    users.append(user_data)
-    cluster = int(kmeans(users,TEST_USERS)["cluster"])
-    user_data["cluster"] = cluster
+    # d = deepcopy(user_data)
 
-    db.accounts.replace_one({"spotify_id":user_data["spotify_id"]},user_data)
-    return json.dumps({"kmeans":cluster})
+    # CREATE THE GENRE LIST AND THATS IT
+    # DONT FORGET TO GIT LFS THE GENRE FILE
+
+    return json.dumps({"kmeans":{}})
 
 @app.route("/refresh", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -247,7 +252,6 @@ def upload():
     data = {'image': b64_image, 'title': str(uuid.uuid4().hex)}
 
     req = requests.post(url="https://api.imgur.com/3/upload.json", data=data,headers=headers)
-    print(req.json())
     if req.status_code!=200:
         return {"code":404}
     link = req.json()["data"]["link"]
@@ -269,17 +273,6 @@ def posts():
         post_data = json.loads(post_data)
         posts.insert_one(post_data)
         return {}
-    return {}
-
-@app.route("/posts/<id>/comment", methods=['GET','POST'])
-@cross_origin(supports_credentials=True)
-def comment(id):
-    comment = request.data.decode("utf-8")
-    client = MongoClient(mongo_uri)
-    db = client["main"]
-    post = db.posts.find_one({"post_id":id})
-    post.comments.append(comment)
-    return db.posts.replace_one({"post_id":id},post)
 
 @app.route("/posts/<id>/like", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)

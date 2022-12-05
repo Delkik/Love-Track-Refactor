@@ -37,12 +37,15 @@ def debug_kmeans(df,spotify_users):
 def kmeans(spotify_users, df):
 
 
-    # d = spotify_users
+    d = spotify_users
+    # print(type(d))
     # for i in ["_id","name","age","gender","lookingFor","relationshipType","orientation","interests","test","occupation","school","description","favoriteColor","location","locationRange","ageRange","spotify_id","bio","profile_img","cluster"]:
     #     d.pop(i,None)
     
+    print(d)
+    
     # d = pd.DataFrame(d)
-    print(list(df.columns))
+    # print(list(df.columns))
 
     new_df = df.drop(columns=["spotify_id"])
     users = new_df.sample(n=3000)
