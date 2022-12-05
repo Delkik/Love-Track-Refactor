@@ -3,12 +3,14 @@ import { useEffect , useState} from 'react'
 import io from "socket.io-client"
 import "../styles/chat.css"
 import Navtab from "../components/Navtab";
+import xButton from "../images/whiteXButton.png"
 
 
 let endPoint = "http://127.0.0.1:5000"
-// let socket = io.connect("http://127.0.0.1:5000")
+let socket = io.connect("http://127.0.0.1:5000")
+// {socket}
 
-function Chat({socket}) {
+function Chat() {
     const {state} = useLocation();
     const data = state
     const [messages, setMessages] = useState([{ms:"Hello and Welcome", sender:"Imtiaz"}, {ms:"no stop talking", sender:"Sanjida"}, {ms:"don't tell me what to do", sender:"Imtiaz"}, {ms:"naurrr", sender:"Sanjida"}, {ms:"So when you wanna go out?", sender:"Imtiaz"}, {ms:"You way too gassed up boy", sender:"Sanjida"}])
@@ -16,12 +18,14 @@ function Chat({socket}) {
     const [joinedRoom, setJoined] = useState(false);
 
     useEffect(() => {
-    //   const socket = io("localhost:5000/", {
-    //     transports: ["websocket"],
-    //     cors: {
-    //       origin: "http://localhost:3000/",
-    //     },
-    //   });  
+      const socket = io("localhost:5000/", {
+        transports: ["websocket"],
+        cors: {
+          origin: "http://localhost:3000/",
+        },
+      });  
+    // console.log("this is the socket object")
+    // console.log(socket)
       socket.on("connect", (data) => {
         console.log(data);
       });
@@ -71,7 +75,8 @@ function Chat({socket}) {
           <button onClick={() => onClick()}>Send!</button>
           </div>
 
-          <Navtab data={data}/>
+          {/* <img className = "xButton" onClick={() => onClickX()} src={xButton} alt="White Button"/> */}
+          {/* <Navtab data={data}/> */}
       </div>  
       );
 }

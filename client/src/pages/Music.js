@@ -9,9 +9,11 @@ import chatIcon from "../images/chatIcon.png"
 import { useSelector } from "react-redux";
 import io from "socket.io-client"
 import Chat from "../components/ChatBox";
+import xButton from "../images/whiteXButton.png"
 
 
-let socket = io.connect("http://127.0.0.1:5000")
+
+//  let socket = io.connect("http://127.0.0.1:5000")
 
 export default function Music(){
     
@@ -29,6 +31,12 @@ export default function Music(){
             },
           });  
         setSocket(socket)
+    }
+
+    const onClickX = () =>{
+        setClicked(false)
+        navigate("/home",)
+
     }
 
     return(
@@ -50,7 +58,11 @@ export default function Music(){
             
             </div>
             :
-            <Chat socket = {socketI}/>
+            <div>
+            {/* <Chat socket = {socketI}/> */}
+            <Chat/>
+            <img className = "xButton" onClick={() => onClickX()} src={xButton} alt="White Button"/>
+            </div>
             }
             <Player accessToken={tokens.accessToken} trackUri={["spotify:track:6S3JlDAGk3uu3NtZbPnuhS"]}/>
 
