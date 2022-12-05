@@ -2,30 +2,38 @@ import {configureStore, combineReducers} from "@reduxjs/toolkit"
 import tokenReducer from "./tokens"
 import userReducer from "./user"
 import postsReducer from "./posts"
+import likesReducer from "./likes"
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 
 const persistConfigUser = {
-  key: 'root',
+  key: 'user',
   storage,
 }
 
 const persistConfigTokens = {
-  key: 'root',
+  key: 'tokens',
   storage,
 }
 
 const persistConfigPosts = {
-  key: 'root',
+  key: 'posts',
   storage,
 }
+
+const persistConfigLikes = {
+  key: 'likes',
+  storage,
+}
+
 
 
 const allReducers = combineReducers({
     user: persistReducer(persistConfigUser, userReducer),
     tokens: persistReducer(persistConfigTokens, tokenReducer),
-    posts: persistReducer(persistConfigPosts, postsReducer)
+    posts: persistReducer(persistConfigPosts, postsReducer),
+    likes: persistReducer(persistConfigLikes, likesReducer),
 });
 
 export const store = configureStore({

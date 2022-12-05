@@ -12,7 +12,7 @@ export default function RedirectUser({code}) {
     // const [userData, setUserData] = useState();
     let userData = useSelector(state => state.user.value)
     const accessToken = useAuth(code);
-    
+    console.log(accessToken)
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -25,6 +25,9 @@ export default function RedirectUser({code}) {
             const data = await res.json();
             setUserType(data.user.product)
             setUserId(data.user.id)
+        })
+        .catch(err => {
+            window.location = '/'
         })
     }, [accessToken])
 
@@ -49,10 +52,10 @@ export default function RedirectUser({code}) {
 
     useEffect(() => {
         if (userType !== "premium"){return}
-
+        console.log(userData)
         fetch("http://localhost:5000/kmeans", {
             method: "POST",
-            body: userId,
+            body: JSON.stringify(userData.user),
             credentials:"omit"
         })
         .then(async res => {
@@ -75,7 +78,7 @@ export default function RedirectUser({code}) {
         return <div>BRUH</div>
     }
 
-    if (userData){
+    if (userData.user){
         window.history.pushState({}, null, "/")
         return <Navigate to="/home"/>
     }
