@@ -137,7 +137,8 @@ def get_tracks():
             #l.append(i)
             if len(i["track"]["album"]["artists"]) == 1:
                 l.append(item)
-    return dumps(l)
+    #return dumps(l)
+    return l
 
     
 
