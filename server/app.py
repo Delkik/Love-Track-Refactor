@@ -1,20 +1,23 @@
 import base64
 import json 
 import os
-from pymongo import MongoClient
+import pandas as pd
 import requests
+import random
 import spotipy
 import uuid
-import urllib
 
 from bson.json_util import dumps
 from datetime import time
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, session, request
 from flask_cors import CORS, cross_origin
-from flask_socketio import SocketIO, send, emit 
-from imgurpython import ImgurClient
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
+from match import kmeans
+from pymongo import MongoClient
 from spotipy.oauth2 import SpotifyOAuth
+
+TEST_USERS = pd.read_csv("test_users.csv")
 
 load_dotenv()
 scope = "streaming user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state"
@@ -41,11 +44,22 @@ app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
 socketio = SocketIO(app,cors_allowed_origins="*")
 TOKEN_INFO = "code"
 
+@socketio.on('join')
+def on_join(data):
+    room = data
+    print("room: " + room)
+    join_room(room)
+
+@socketio.on('leave')
+def on_leave(data):
+    room = data['room']
+    leave_room(room)
+    
 @socketio.on("message")
 def handle_message(message):
-    print("Received message: " + message)
+    print("Received message: " + message['ms'])
     print("I have been triggered")
-    send(message, broadcast=True)
+    emit('my_response', message, broadcast=True)
     return None
 
 @socketio.on("connect")
@@ -54,6 +68,7 @@ def connected():
     print(request.sid)
     print("client has connected")
     emit("connect",{"data":f"id: {request.sid} is connected"})
+
 
 def create_auth():
     return SpotifyOAuth(
@@ -106,11 +121,45 @@ def update_user():
     user = db.accounts.replace_one({"spotify_id":user_data["spotify_id"]},user_data)
     return {}
 
+@app.route("/match", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def match():
+    user_data = request.data.decode("utf-8")
+    user_data = json.loads(user_data)
+    user_data.pop('_id', None)
+
+    client = MongoClient(mongo_uri)
+    db = client["main"]
+    users = db.accounts.find({}).limit(1000)
+
+    cluster = int(kmeans(users,TEST_USERS)["cluster"])
+    user_data["cluster"] = cluster
+
+    # users = dumps(db.accounts.find({"cluster":cluster}).limit(100))
+    db.accounts.replace_one({"spotify_id":user_data["spotify_id"]},user_data)
+    # user = eval(users)
+    # if user == []:
+    #     return json.dumps({"kmeans":{}})
+    return json.dumps({"kmeans":cluster})
+
+
 @app.route("/kmeans", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
-def kmeans():
-    
-    return {"kmeans":"kmeans"}
+def kmeans_train():
+    user_data = request.data.decode("utf-8")
+    user_data = json.loads(user_data)
+    user_data.pop('_id', None)
+
+    client = MongoClient(mongo_uri)
+    db = client["main"]
+    users = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]}}).limit(1000)
+
+    users.append(user_data)
+    cluster = int(kmeans(users,TEST_USERS)["cluster"])
+    user_data["cluster"] = cluster
+
+    db.accounts.replace_one({"spotify_id":user_data["spotify_id"]},user_data)
+    return json.dumps({"kmeans":cluster})
 
 @app.route("/refresh", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -174,10 +223,17 @@ def get_tracks():
     for j in range(10):
         songs = sp.current_user_saved_tracks(limit=50, offset=j*50)['items']
         for i in songs:
-            print(i)
+            #print(i)
             if i in l:
                 return dumps(l)
-            l.append(i)
+            name = i["track"]["album"]["name"].replace(" ", "%20")
+            im = i["track"]["album"]["images"][1]["url"]
+            artist = i["track"]["album"]["artists"][0]["name"].replace(" ", "%20")
+            print("name: " + name + "  image:  " + im + " . artist:  " + artist)
+            item = {"n": name, "i":im, "a":artist}
+            #l.append(i)
+            if len(i["track"]["album"]["artists"]) == 1:
+                l.append(item)
     return dumps(l)
 
 @app.route("/upload", methods=['POST'])

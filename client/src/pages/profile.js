@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "../styles/profile.css"
 import { useState } from "react";
 import { setUser } from "../redux/user";
+import love_track_logo from "../images/love_track_logo.png"
 
 export default function Profile(){
 
@@ -17,6 +18,11 @@ export default function Profile(){
         "Racing",
         "Fishing",
         "Water",
+        "Water",
+        "Water",
+        "Water",
+        "Water",
+        "Water",
     ]
 
     function handleChange(event) {
@@ -24,6 +30,7 @@ export default function Profile(){
       }
 
     const fileHandler = (e) => {
+        console.log(image)
         let formData = new FormData();
         formData.append("file",image)
         formData.append('fileName', image.name);
@@ -62,9 +69,9 @@ export default function Profile(){
             <div className='screenSettings'>
 
 				{/* <div> */}
-                    {/* <div className='icon'>
+                    <div className='icon'>
                         <img src={love_track_logo} alt='title icon' />
-                    </div> */}
+                    </div>
                     <div >
                         <img src={user.user.profile_img} className='profile-pic'/>
                         {/* <input type='file' id='input-file' name='Image Uploader' style={{ backgroundImage: `url(${upload_icon})` }} />

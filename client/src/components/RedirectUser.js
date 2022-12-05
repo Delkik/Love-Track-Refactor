@@ -49,10 +49,10 @@ export default function RedirectUser({code}) {
 
     useEffect(() => {
         if (userType !== "premium"){return}
-
+        console.log(userData)
         fetch("http://localhost:5000/kmeans", {
             method: "POST",
-            body: userId,
+            body: JSON.stringify(userData.user),
             credentials:"omit"
         })
         .then(async res => {
@@ -75,7 +75,7 @@ export default function RedirectUser({code}) {
         return <div>BRUH</div>
     }
 
-    if (userData){
+    if (userData.user){
         window.history.pushState({}, null, "/")
         return <Navigate to="/home"/>
     }

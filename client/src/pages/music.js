@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../styles/music.css"
 import cover from "../images/neverRecover.jpg"
 import rightNext from "../images/rightNext.png"
