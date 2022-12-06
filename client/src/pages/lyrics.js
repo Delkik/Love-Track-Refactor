@@ -11,13 +11,19 @@ export default function Lyrics(){
     let posts = useSelector(state => state.posts.value)
 
     const [lyrics, setLyrics] = useState({lyric:""})
+    const [tracks, setTracks] = useState()
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const onChangeValue = (e) => {
-        fetch("http://127.0.0.1:5000/user_tracks").then(async res => {
+        fetch("http://localhost:5000/user_tracks", {
+            method: "GET",
+            credentials:"include",
+        }
+        
+        ).then(async res => {
             const data = await res.json()
-            setTracks(data)
+            // setTracks(data)
             console.log("this is the tracks data")
             console.log(data)
             // console.log(tracks)

@@ -9,7 +9,7 @@ export default function useAuth(code){
 
     var fetch_count = 0
     useEffect(() => {
-        console.log(code)
+        console.log(code,"wefuhakwehf")
         fetch("http://localhost:5000/spotify", {
             method: 'POST',
             body: code,

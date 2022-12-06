@@ -44,6 +44,7 @@ CORS(app, resources={r"/*":{"origins":"*"}})
 
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
+app.config["SESSION_COOKIE_HTTPONLY"] = False
 socketio = SocketIO(app,cors_allowed_origins="*")
 TOKEN_INFO = "code"
 
@@ -82,9 +83,12 @@ def create_auth():
 @app.route("/current_user", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def current_user():
+    # print(session,"CURRENT", TOKEN_INFO)
+    print(session, "BEFORE")
     token_info = session.get(TOKEN_INFO, None)
     client = spotipy.client.Spotify(auth=token_info["access_token"])
     user = client.me()
+    print(session, "AFTER")
     return json.dumps({"user":user})
 
 @app.route("/user_tracks", methods=['GET','POST'])
@@ -93,6 +97,7 @@ def get_tracks():
     print("i am working")
     sp = None
     try:
+        print(session,"TRACKS")
         token_info = session.get(TOKEN_INFO, None)
         sp = spotipy.Spotify(auth = token_info['access_token'])
     except:
@@ -103,7 +108,7 @@ def get_tracks():
     for j in range(10):
         songs = sp.current_user_saved_tracks(limit=50, offset=j*50)['items']
         for i in songs:
-            #print(i)
+            print(i)
             if i in l:
                 return dumps(l)
             name = i["track"]["album"]["name"].replace(" ", "%20")
@@ -223,12 +228,15 @@ def refresh():
 @cross_origin(supports_credentials=True)
 def spotify():
     code = request.data.decode("utf-8")
+    # print(code,"SPOTIFY")
     sp = create_auth()
 
     session.clear()
 
     token_info = sp.get_access_token(code)
     session[TOKEN_INFO] = token_info
+    session.modified = True
+    # print(session,token_info,"SPOTIFY")
 
     return json.dumps(
         {
@@ -299,15 +307,15 @@ def like(id):
     db.posts.replace_one({"post_id":id},post)
     return dumps(db.posts.find({}).limit(30))
 
-def getToken():
-    token_info = session.get("token_info", None)
-    if not token_info:
-        raise "exception"
-    expired = token_info['expires_at'] - int(time.time())
-    if expired < 60:
-        oath = create_auth()
-        token_info = oath.refresh_access_token(token_info['refresh_token'])
-    return token_info
+# def getToken():
+#     token_info = session.get("token_info", None)
+#     if not token_info:
+#         raise "exception"
+#     expired = token_info['expires_at'] - int(time.time())
+#     if expired < 60:
+#         oath = create_auth()
+#         token_info = oath.refresh_access_token(token_info['refresh_token'])
+#     return token_info
 
 if __name__ == "__main__":
     app.run("127.0.0.1")

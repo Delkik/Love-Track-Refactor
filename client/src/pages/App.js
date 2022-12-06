@@ -11,7 +11,7 @@ import Social from './social';
 import Profile from './profile';
 import Settings from './settings';
 import Music from './music';
-import Chat from './chat';
+// import Chat from './chat';
 import Lyrics from './lyrics';
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
             <Route path="/profile" element={<Profile/>} />
             <Route path="/settings" element={<Settings/>} />
             <Route path="/music" element={<Music/>} />
-            <Route path="/chat" element={<Chat/>} />
+            {/* <Route path="/chat" element={<Chat/>} /> */}
             <Route path="/lyrics" element = {<Lyrics/>}/>
           </Routes>
       </Router>

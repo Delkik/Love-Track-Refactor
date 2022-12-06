@@ -14,8 +14,11 @@ export default function RedirectUser({code}) {
     const accessToken = useAuth(code);
     const dispatch = useDispatch();
 
+    const [retry, setRetry] = useState(2)
+
     useEffect(() => {
-        if (!accessToken) return
+        if (!accessToken || retry === 0) return
+        console.log(accessToken,"CURRENT")
         fetch("http://localhost:5000/current_user", {
             method: "GET",
             credentials:"include"
@@ -26,9 +29,10 @@ export default function RedirectUser({code}) {
             setUserId(data.user.id)
         })
         .catch(err => {
-            window.location = '/'
+            setRetry(retry-1)
+            // window.location = '/'
         })
-    }, [accessToken])
+    }, [accessToken, retry])
 
     
     useEffect(() => {

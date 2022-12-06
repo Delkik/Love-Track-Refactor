@@ -6,8 +6,8 @@ import Navtab from "../components/Navtab";
 import xButton from "../images/whiteXButton.png"
 
 
-let endPoint = "http://127.0.0.1:5000"
-let socket = io.connect("http://127.0.0.1:5000")
+let endPoint = "http://localhost:5000"
+let socket = io.connect("http://localhost:5000")
 // {socket}
 
 function Chat() {
