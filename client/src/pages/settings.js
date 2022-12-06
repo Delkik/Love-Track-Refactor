@@ -41,7 +41,6 @@ export default function Settings(){
       .then(async res => {
         const data = await res.json()
         console.log(data)
-        
         navigate("/home")
         alert("Saved!")
             // window.history.pushState({}, null, "/")

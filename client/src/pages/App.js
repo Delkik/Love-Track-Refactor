@@ -13,7 +13,6 @@ import Settings from './settings';
 import Music from './music';
 import Chat from './chat';
 import Lyrics from './lyrics';
-import Post from '../components/Post';
 
 function App() {
 
@@ -24,9 +23,7 @@ function App() {
             <Route path="/" element={<Main/>} />
             <Route path="/home" element={<HomePage/>} />
             <Route path="/match" element={<Match/>} />
-            <Route path="/social" element={<Social/>} >
-              <Route path=":postId" element={<Post />} />
-            </Route>
+            <Route path="/social" element={<Social/>} />
             <Route path="/profile" element={<Profile/>} />
             <Route path="/settings" element={<Settings/>} />
             <Route path="/music" element={<Music/>} />

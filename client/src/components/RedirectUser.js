@@ -12,7 +12,6 @@ export default function RedirectUser({code}) {
     // const [userData, setUserData] = useState();
     let userData = useSelector(state => state.user.value)
     const accessToken = useAuth(code);
-    console.log(accessToken)
     const dispatch = useDispatch();
 
     useEffect(() => {

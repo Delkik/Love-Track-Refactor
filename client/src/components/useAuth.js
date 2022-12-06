@@ -6,7 +6,6 @@ import { setTokens } from "../redux/tokens";
 export default function useAuth(code){
     const dispatch = useDispatch()
     let tokens = useSelector(state => state.tokens.value)
-    // console.log(code)
 
     var fetch_count = 0
     useEffect(() => {

@@ -15,13 +15,16 @@ export default function Lyrics(){
     const dispatch = useDispatch()
 
     const onChangeValue = (e) => {
-        fetch("http://127.0.0.1:5000/get_song_words").then(async res => {
+        fetch("http://127.0.0.1:5000/user_tracks").then(async res => {
             const data = await res.json()
-            setLyrics(data)
+            setTracks(data)
+            console.log("this is the tracks data")
             console.log(data)
+            // console.log(tracks)
         }).catch(error=>{
             console.log(error)
-        })
+          })
+
     }
 
     const onPost = (e) => {
