@@ -9,9 +9,9 @@ export default function Main(){
 
     let tokens = useSelector(state => state.tokens.value)
 
-    if (tokens){
-        return <RedirectUser code={tokens.accessToken}/>
-    }
+    // if (tokens){
+    //     return <RedirectUser code={tokens.accessToken}/>
+    // }
 
     const params = new URLSearchParams(window.location.search)
     const code = params.get("code")

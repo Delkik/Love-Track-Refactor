@@ -4,11 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import Post from "../components/Post";
 import justin from "../images/justin.png"
 import { setPosts } from "../redux/posts";
+import { setLikes } from "../redux/likes";
 
 export default function Social(){
 
     let posts = useSelector(state => state.posts.value)
     let user_data = useSelector(state => state.user.value)
+    let likes = useSelector(state => state.likes.value)
     const dispatch = useDispatch()
     console.log(posts,"BJBI")
     // console.log(user_data)
@@ -20,9 +22,6 @@ export default function Social(){
         })
         .then(async res => {
             let data = await res.json()
-            for (let i = 0; i < data.length; i++){
-                data[i].profile_img = justin
-            }
             dispatch(setPosts(data))
             console.log(data,"usharedfibuawelifu")
         })
@@ -34,6 +33,18 @@ export default function Social(){
     const onlike = (like_data) => {
         console.log(like_data)
         // need post_id
+
+        let liked_data = [...likes]
+        console.log(liked_data)
+        if (likes.includes(like_data["post_id"])){
+            const i = liked_data.indexOf(like_data["post_id"])
+            liked_data.splice(i,1)
+            
+        }
+        else{
+            liked_data.push(like_data["post_id"])
+        }
+        dispatch(setLikes(liked_data))
         fetch("http://localhost:5000/posts/"+like_data["post_id"]+"/like", {
             method: "POST",
             body: user_data.user.spotify_id,
@@ -73,7 +84,7 @@ export default function Social(){
 
     return (
         <div>
-            {posts.map((post, idx) => <Post key={idx} post_data={post} onLike={onlike} onComment={onComment}/>)}
+            {posts.map((post, idx) => <Post key={idx} post_data={post} onLike={onlike} liked={likes.includes(post.post_id)}/>)}
             <Navtab/>
         </div>
     )

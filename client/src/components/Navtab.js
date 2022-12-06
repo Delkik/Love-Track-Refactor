@@ -5,8 +5,10 @@ import chat from "../images/chat_button.png"
 import social from "../images/social_media_button.png"
 import profile from "../images/justin.png"
 import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux";
 
 export default function Navtab(){
+    let user_data = useSelector(state => state.user.value)
     const navigate = useNavigate();
     const passData = (event, path) =>{
         navigate(path)
@@ -25,7 +27,7 @@ export default function Navtab(){
                     <img src={social} alt="social" />
                 </div>
                 <div className="nav-main_item" onClick = {(event) => {passData(event, "/profile")}}>
-                    <img className="nav-profile_img" src={profile} alt="Profile" />
+                    <img className="nav-profile_img" src={user_data.user.profile_img} alt="Profile" />
                 </div>
 
             </div>
