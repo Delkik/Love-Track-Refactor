@@ -71,9 +71,9 @@ export default function RedirectUser({code}) {
         return <div>Gathering data on User...</div>
     }
 
-    if (userType !== "premium"){
-        return <div>BRUH</div>
-    }
+    // if (userType !== "premium"){
+    //     return <div>BRUH</div>
+    // }
 
     if (userData){
         window.history.pushState({}, null, "/")

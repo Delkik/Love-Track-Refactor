@@ -6,10 +6,10 @@ import social from "../images/social_media_button.png"
 import profile from "../images/justin.png"
 import { useNavigate } from "react-router-dom"
 
-export default function Navtab({data}){
+export default function Navtab(){
     const navigate = useNavigate();
     const passData = (event, path) =>{
-        navigate(path,{state: data})
+        navigate(path)
    }
     return(
         <div>
