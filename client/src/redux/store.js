@@ -27,8 +27,6 @@ const persistConfigLikes = {
   storage,
 }
 
-
-
 const allReducers = combineReducers({
     user: persistReducer(persistConfigUser, userReducer),
     tokens: persistReducer(persistConfigTokens, tokenReducer),

@@ -30,8 +30,6 @@ export default function Social(){
         })
     }, [])
 
-    // useEffect()
-
     const onlike = (like_data) => {
         console.log(like_data)
         // need post_id
@@ -47,7 +45,6 @@ export default function Social(){
             liked_data.push(like_data["post_id"])
         }
         dispatch(setLikes(liked_data))
-
         fetch("http://localhost:5000/posts/"+like_data["post_id"]+"/like", {
             method: "POST",
             body: user_data.user.spotify_id,

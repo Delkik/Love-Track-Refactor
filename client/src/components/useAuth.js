@@ -6,11 +6,10 @@ import { setTokens } from "../redux/tokens";
 export default function useAuth(code){
     const dispatch = useDispatch()
     let tokens = useSelector(state => state.tokens.value)
-    // console.log(code)
 
     var fetch_count = 0
     useEffect(() => {
-        console.log(code)
+        console.log(code,"wefuhakwehf")
         fetch("http://localhost:5000/spotify", {
             method: 'POST',
             body: code,
