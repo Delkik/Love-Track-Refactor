@@ -65,7 +65,7 @@ export default function Music(){
             <img className = "xButton" onClick={() => onClickX()} src={xButton} alt="White Button"/>
             </div>
             }
-            <Player accessToken={tokens.accessToken} trackUri={["spotify:track:6S3JlDAGk3uu3NtZbPnuhS"]}/>
+            <Player accessToken={tokens.accessToken} trackUri={["spotify:track:7fGXbdXWlUH6OoUEaHMww9"]}/>
 
         </div>
     )

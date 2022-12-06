@@ -29,7 +29,7 @@ export default function RedirectUser({code}) {
             setUserId(data.user.id)
         })
         .catch(err => {
-            setRetry(retry-1)
+            setRetry(retry)
             // window.location = '/'
         })
     }, [accessToken, retry])

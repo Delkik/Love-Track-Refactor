@@ -23,7 +23,7 @@ export default function Lyrics(){
         
         ).then(async res => {
             const data = await res.json()
-            // setTracks(data)
+            setTracks(data)
             console.log("this is the tracks data")
             console.log(data)
             // console.log(tracks)

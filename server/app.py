@@ -87,8 +87,8 @@ def current_user():
     print(session, "BEFORE")
     token_info = session.get(TOKEN_INFO, None)
     client = spotipy.client.Spotify(auth=token_info["access_token"])
-    user = client.me()
     print(session, "AFTER")
+    user = client.me()
     return json.dumps({"user":user})
 
 @app.route("/user_tracks", methods=['GET','POST'])
@@ -111,11 +111,14 @@ def get_tracks():
             print(i)
             if i in l:
                 return dumps(l)
-            name = i["track"]["album"]["name"].replace(" ", "%20")
+            album = i["track"]["album"]["name"].replace(" ", "%20")
+            name = i["track"]["name"].replace(" ", "%20")
             im = i["track"]["album"]["images"][1]["url"]
+            uri = i["track"]["uri"]
             artist = i["track"]["album"]["artists"][0]["name"].replace(" ", "%20")
+            duration = i["track"]["duration_ms"]
             print("name: " + name + "  image:  " + im + " . artist:  " + artist)
-            item = {"n": name, "i":im, "a":artist}
+            item = {"name": name, "image":im, "artist":artist, "uri":uri, "album":album, "duration": duration}
             #l.append(i)
             if len(i["track"]["album"]["artists"]) == 1:
                 l.append(item)
