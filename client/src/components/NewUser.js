@@ -28,7 +28,6 @@ const genres = {'pop rap': 0, 'pop': 0, 'post-teen pop': 0, 'trap music': 0, 'da
 'soda pop': 0, 'deep orgcore': 0, 'cinematic dubstep': 0, 'song poem': 0, 'vintage gospel': 0, 'deep german jazz': 0, 'neo-traditional country': 0, 'deep delta blues': 0, 'necrogrind': 0, 'vintage country folk': 0, 'deep breakcore': 0, 'deep symphonic black metal': 0, 'dark electro-industrial': 0, 'caucasian folk': 0, 'saxophone': 0, 'anime cv': 0, 'vintage swoon': 0, 'drone psych': 0, 'deep latin jazz': 0, 'central asian folk': 0, 'vintage reggae': 0, 'deep string quartet': 0, 'rock noise': 0, 'vintage western': 0, 'smooth urban r&b': 0, 'deep deep tech house': 0}
 
 
-
 export default function NewUser({spotifyId}){
     const [newPage, setNewPage] = useState(1);
     const dispatch = useDispatch();
