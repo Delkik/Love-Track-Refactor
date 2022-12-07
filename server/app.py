@@ -6,6 +6,7 @@ import requests
 import random
 import spotipy
 import uuid
+from lyric_generator import *
 
 from copy import deepcopy
 
@@ -111,16 +112,16 @@ def get_tracks():
             print(i)
             if i in l:
                 return dumps(l)
-            album = i["track"]["album"]["name"].replace(" ", "%20")
-            name = i["track"]["name"].replace(" ", "%20")
+            album = i["track"]["album"]["name"].replace(" ", "-")
+            name = i["track"]["name"].replace(" ", "-")
             im = i["track"]["album"]["images"][1]["url"]
             uri = i["track"]["uri"]
-            artist = i["track"]["album"]["artists"][0]["name"].replace(" ", "%20")
+            artist = i["track"]["artists"][0]["name"].replace(" ", "-")
             duration = i["track"]["duration_ms"]
             print("name: " + name + "  image:  " + im + " . artist:  " + artist)
             item = {"name": name, "image":im, "artist":artist, "uri":uri, "album":album, "duration": duration}
             #l.append(i)
-            if len(i["track"]["album"]["artists"]) == 1:
+            if len(i["track"]["artists"]) == 1:
                 l.append(item)
     return dumps(l)
     #return l
@@ -129,17 +130,35 @@ def get_tracks():
 @app.route("/get_song_words", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def getLyrics():
-    t = get_tracks()
-    print("i have been summoned")
-    print("this is the request body")
-    print(request.body)
-    url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
-    r = requests.get(url)
-    data = r.json()
-    data = data['message']['body']
-    print(data['lyrics']['lyrics_body'].split('\n')[2])
-    response = jsonify({"lyric":data['lyrics']['lyrics_body'].split('\n')[2],"song":"Sexy and I Know It"}) #replace with song name
-    return response
+    bdy = request.get_json()
+   # print(bdy[random.randint(0,len(bdy)-1)])
+    while True:
+        try:
+            bdy = bdy[random.randint(0,len(bdy)-1)]
+            print(bdy)
+            # #url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=" + bdy['n'] + "&q_artist=" + bdy['a'] + api_key
+            # url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=Barbed%20Wire&q_artist=Kendrick%20Lamar" + api_key
+            # r = requests.get(url)
+            # data = r.json()
+            # data = data['message']['body']
+            # print( data['lyrics']['lyrics_body'].split('\n')[1])
+            # #print(data['lyrics']['lyrics_body'].split('\n')[2])
+            # response = jsonify(lyric = data['lyrics']['lyrics_body'].split('\n')[1])
+            # return response
+            return jsonify(lyric = lyrics(bdy['n'], bdy['a']))
+        except:
+            return "Oops seeming to have difficutly with retrieving lyrics."
+    # t = get_tracks()
+    # print("i have been summoned")
+    # print("this is the request body")
+    # print(request.body)
+    # url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
+    # r = requests.get(url)
+    # data = r.json()
+    # data = data['message']['body']
+    # print(data['lyrics']['lyrics_body'].split('\n')[2])
+    # response = jsonify({"lyric":data['lyrics']['lyrics_body'].split('\n')[2],"song":"Sexy and I Know It"}) #replace with song name
+    # return response
 
 @app.route("/create_user", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
