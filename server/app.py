@@ -322,4 +322,4 @@ def like(id):
 
 if __name__ == "__main__":
     app.run("127.0.0.1")
-    socketio.run(app, debug=True,port=5000)
+    # socketio.run(app, debug=True,port=5000)

@@ -85,23 +85,23 @@ export default function Profile(){
 				<div>
 				<div className='pro'>
 					<span>
-					{user.user.name}
+					{user.user.name} 
 					</span>
 					<span>
-					, 
+					 , 
 					</span>
 					<span>
 					{user.user.age}
 					</span>
 				</div>
 				<p className='occupation'> {user.user.occupation ? user.user.occupation : "Occupation"}</p>
-				<p className='companyName'> {user.user.occupation ? user.user.occupation : "Company"}</p>
+				<p className='companyName'> {user.user.job ? user.user.job : "Company"}</p>
 				</div>
 				<div className='about'>
                     <h3>About me</h3>
-                    <p>{user.user.bio === undefined || user.user.bio === "" ? "Write something here!" : user.user.bio}</p>
+                    <p>{user.user.description === undefined || user.user.description === "" ? "Write something here!" : user.user.description}</p>
                 </div>
-                <div className='interests'>
+                <div className='profile-interests'>
                     <h3>My Interests</h3>
                     {
                         interests.map((interest, idx) => {

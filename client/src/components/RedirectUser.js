@@ -4,6 +4,7 @@ import NewUser from "./NewUser";
 import { Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/user";
+import Loading from "./Loading";
 
 export default function RedirectUser({code}) {
     const [userId, setUserId] = useState();
@@ -29,7 +30,7 @@ export default function RedirectUser({code}) {
             setUserId(data.user.id)
         })
         .catch(err => {
-            setRetry(retry)
+            setRetry(retry-1)
             // window.location = '/'
         })
     }, [accessToken, retry])
@@ -74,7 +75,7 @@ export default function RedirectUser({code}) {
 
     // Render loading screen or something
     if (userExists===undefined){
-        return <div>Gathering data on User...</div>
+        return <Loading action={"Gathering data on User"} />
     }
 
     if (userType !== "premium"){
@@ -86,6 +87,6 @@ export default function RedirectUser({code}) {
         return <Navigate to="/home"/>
     }
     else{
-        return (<NewUser spotifyId={userId}/>)
+        return (<NewUser spotifyId={userId} code={code}/>)
     }
 }

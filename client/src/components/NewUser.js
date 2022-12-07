@@ -5,6 +5,9 @@ import NewUser3 from "./NewUser3";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/user";
+import "../styles/newUser.css"
+import Loading from "./Loading";
+import RedirectUser from "./RedirectUser";
 
 const genres = {'pop rap': 0, 'pop': 0, 'post-teen pop': 0, 'trap music': 0, 'dance pop': 0, 'rock': 0, 'rap': 0, 'tropical house': 0, 'neo mellow': 0, 'southern hip hop': 0, 'edm': 0, 'dwn trap': 0, 'hip hop': 0, 'latin': 0, 'r&b': 0, 'pop rock': 0, 'folk-pop': 0, 'viral pop': 0, 'singer-songwriter': 0, 'mellow gold': 0, 'classic rock': 0, 'indie r&b': 0, 'alternative rock': 0, 'latin pop': 0, 'album rock': 0, 'indie rock': 0, 'alternative metal': 0, 'tropical': 0, 'post-grunge': 0, 'indie pop': 0, 'indie folk': 0, 'electro house': 0, 'canadian pop': 0, 'permanent wave': 0, 'hard rock': 0, 'urban contemporary': 0, 'indietronica': 0, 'soft rock': 0, 'pop punk': 0, 'gangster rap': 0, 'reggaeton': 0, 'hip pop': 0, 'indie poptimism': 0, 'nu metal': 0, 'contemporary country': 0, 'dirty south rap': 0, 'big room': 0, 'soul': 0, 'house': 0, 'latin hip hop': 0, 'country': 0, 'rock en espanol': 0, 'garage rock': 0, 'country road': 0, 'europop': 0, 'folk rock': 0, 'chamber pop': 0, 
 'adult standards': 0, 'synthpop': 0, 'rap metal': 0, 'roots rock': 0, 'shimmer pop': 0, 'funk rock': 0, 'stomp and holler': 0, 'grupera': 0, 'neo soul': 0, 'regional mexican': 0, 'new wave pop': 0, 'alternative dance': 0, 'progressive house': 0, 'underground hip hop': 0, 'deep pop r&b': 0, 'blues-rock': 0, 'dance rock': 0, 'emo': 0, 'brostep': 0, 'teen pop': 0, 'new wave': 0, 'banda': 0, 'latin alternative': 0, 'electronic trap': 0, 'electronic': 0, 'motown': 0, 'spanish pop': 0, 'neo-psychedelic': 0, 'progressive electro house': 0, 'quiet storm': 0, 'norteno': 0, 'psychedelic rock': 0, 'art rock': 0, 'crunk': 0, 'new rave': 0, 'modern country rock': 0, 'escape room': 0, 'deep big room': 0, 'rap rock': 0, 'classic funk rock': 0, 'folk': 0, 'acoustic pop': 0, 'metal': 0, 'screamo': 0, 'regional mexican pop': 0, 'bass trap': 0, 'deep indie r&b': 0, 'pixie': 0, 'deep tropical house': 0, 'pop reggaeton': 0, 'metropopolis': 0, 'punk': 0, 'talent show': 0, 'funk': 0, 'new romantic': 0, 'disco': 0, 'metalcore': 0, 'swedish pop': 0, 'reggaeton flow': 0, 'jazz blues': 0, 'hardcore hip hop': 0, 'freak folk': 0, 'vocal jazz': 0, 'east coast hip hop': 0, 'boy band': 0, 'francoton': 0, 'new americana': 0, 'moombahton': 0, 'cumbia pop': 0, 'detroit hip hop': 0, 'dance-punk': 0, 'indie anthem-folk': 0, 'groove metal': 0, 'ranchera': 0, 'brill building pop': 0, 'christian alternative rock': 0, 'g funk': 0, 'soundtrack': 0, 'chillwave': 0, 'deep german hip hop': 0, 'compositional ambient': 0, 'trap francais': 0, 'worship': 0, 'swedish idol pop': 0, 'piano rock': 0, 'argentine rock': 0, 'new jack swing': 0, 'deep pop edm': 0, 'modern blues': 0, 'deep funk carioca': 0, 'rock-and-roll': 0, 'christian music': 0, 'downtempo': 0, 'german hip hop': 0, 'vapor soul': 0, 'ccm': 
@@ -28,7 +31,7 @@ const genres = {'pop rap': 0, 'pop': 0, 'post-teen pop': 0, 'trap music': 0, 'da
 'soda pop': 0, 'deep orgcore': 0, 'cinematic dubstep': 0, 'song poem': 0, 'vintage gospel': 0, 'deep german jazz': 0, 'neo-traditional country': 0, 'deep delta blues': 0, 'necrogrind': 0, 'vintage country folk': 0, 'deep breakcore': 0, 'deep symphonic black metal': 0, 'dark electro-industrial': 0, 'caucasian folk': 0, 'saxophone': 0, 'anime cv': 0, 'vintage swoon': 0, 'drone psych': 0, 'deep latin jazz': 0, 'central asian folk': 0, 'vintage reggae': 0, 'deep string quartet': 0, 'rock noise': 0, 'vintage western': 0, 'smooth urban r&b': 0, 'deep deep tech house': 0}
 
 
-export default function NewUser({spotifyId}){
+export default function NewUser({spotifyId, code}){
     const [newPage, setNewPage] = useState(1);
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -72,7 +75,7 @@ export default function NewUser({spotifyId}){
         )
     }
     else{
-        
+        // console.log()
         let d = Object.assign(Object.assign(data1,data2),data3)
         const userData = {...d,genres:genres,profile_img:"https://i.imgur.com/V4RclNb.png",spotify_id: spotifyId}
         console.log(userData)
@@ -85,13 +88,13 @@ export default function NewUser({spotifyId}){
         })
         .then(async res => {
             const data = await res.json();
-            console.log(data,userData)
-            dispatch(setUser({user:data}))
-            navigate("/home")
+            dispatch(setUser({user:userData}))
+            return <RedirectUser code={code}/>
+            // navigate("/home")
     })
         .catch(err => {
             console.log(err)
         })
     }
-    return (<div>Creating User...</div>)
+    return (<Loading action={"Creating new user"}/>)
 }
