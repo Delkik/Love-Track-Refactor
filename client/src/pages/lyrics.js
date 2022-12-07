@@ -11,22 +11,39 @@ export default function Lyrics(){
     let posts = useSelector(state => state.posts.value)
 
     const [lyrics, setLyrics] = useState({lyric:""})
-    const [tracks, setTracks] = useState()
+    const [tracks, setTracks] = useState(useSelector(state => state.songs.value))
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const onChangeValue = (e) => {
-        fetch("http://localhost:5000/user_tracks", {
-            method: "GET",
-            credentials:"include",
-        }
+        // fetch("http://localhost:5000/user_tracks", {
+        //     method: "GET",
+        //     credentials:"include",
+        // }
         
-        ).then(async res => {
-            const data = await res.json()
-            setTracks(data)
-            console.log("this is the tracks data")
-            console.log(data)
-            // console.log(tracks)
+        // ).then(async res => {
+        //     const data = await res.json()
+        //     setTracks(data)
+        //     console.log("this is the tracks data")
+        //     console.log(data)
+        //     // console.log(tracks)
+        // }).catch(error=>{
+        //     console.log(error)
+        //   })
+
+          console.log("these are the songs from redux")
+        console.log(tracks)
+          fetch("http://localhost:5000/get_song_words", {
+            method:"POST",
+            credentials:"include",
+            body:JSON.stringify(tracks),
+            headers: {
+                'Content-Type':'application/json'
+            },
+          }).then(async res => {
+             const data = await res.json()
+              console.log(data)
+             setLyrics(data.lyric)
         }).catch(error=>{
             console.log(error)
           })
@@ -58,9 +75,9 @@ export default function Lyrics(){
         })
     }
 
-    useEffect(() => {
-        onChangeValue()
-      }, []);
+    // useEffect(() => {
+    //     onChangeValue()
+    //   }, []);
 
     return(
         <div>
