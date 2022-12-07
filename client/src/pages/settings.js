@@ -21,7 +21,7 @@ export default function Settings(){
     let [value, setValue] = useState(data.user.locationRange === "" ? 0 : parseInt(data.user.locationRange,10))
     let [newName, setName] = useState(data.user.name)
     let [newGender, setGender] = useState(data.user.gender)
-    let [newBio, setBio] = useState(data.user.bio)
+    let [newBio, setBio] = useState(data.user.description)
   
     const onChangeValue = (e, func) => {
       func(e.target.value)
@@ -29,7 +29,7 @@ export default function Settings(){
     }
 
     const onSave = (e) => {
-      let newData = {...data.user,gender:newGender,name:newName,locationRange:value,bio:newBio}
+      let newData = {...data.user,gender:newGender,name:newName,locationRange:value,description:newBio}
       console.log(newData)
 
       dispatch(setUser({user: newData}))
@@ -58,8 +58,8 @@ export default function Settings(){
           <img src={love_track_logo} alt='title icon' />     
         </div>
         <p className="title">Settings</p>    
-      <div className='screen'>
-       
+        <div className='settings-screen'>
+        <div className="formDiv">
         <div className='options'>
           <img src={name} alt='Name Icon' />
           <p>Name</p>
@@ -78,8 +78,7 @@ export default function Settings(){
           <img src={bio} alt='Bio Icon' />
           <p>Bio</p>
         </div>
-  
-        <textarea defaultValue={data.user.bio} onChange={event => setBio(event.target.value)}/>
+        <textarea rows="6" cols="30" className="new-description" defaultValue={data.user.description} onChange={event => setBio(event.target.value)}/>
         <br/>
 
         <div className='options'>
@@ -96,6 +95,7 @@ export default function Settings(){
           Save
         </button>
       
+      </div>
       </div>
       <Navtab/>
       </div>

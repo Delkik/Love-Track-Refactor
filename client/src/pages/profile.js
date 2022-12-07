@@ -4,6 +4,7 @@ import "../styles/profile.css"
 import { useState } from "react";
 import { setUser } from "../redux/user";
 import love_track_logo from "../images/love_track_logo.png"
+var parse = require('html-react-parser');
 
 export default function Profile(){
 
@@ -66,49 +67,43 @@ export default function Profile(){
 
     return (
         <div>
-            <div className='screenSettings'>
+            <div className="profile-screen">
 
 				{/* <div> */}
                     <div className='icon'>
                         <img src={love_track_logo} alt='title icon' />
                     </div>
-                    <div >
+                <div className="profile-main">
+                    <div className="PLEASE">
                         <img src={user.user.profile_img} className='profile-pic'/>
-                        {/* <input type='file' id='input-file' name='Image Uploader' style={{ backgroundImage: `url(${upload_icon})` }} />
-                    </div> */}
-				    <form onSubmit={fileHandler}>
-                        <input type='file' id='input-file' accept=".png,.jpg,.jpeg" name='Image Uploader' onChange={handleChange}/>
-                        <button type="submit">Upload</button>
-                    </form>
+                        <form onSubmit={fileHandler}>
+                            <input type='file' id='input-file' accept=".png,.jpg,.jpeg" name='Image Uploader' onChange={handleChange}/>
+                            <button type="submit">Upload</button>
+                        </form>
                     </div>
-				{/* </div> */}
-				<div>
-				<div className='pro'>
-					<span>
-					{user.user.name} 
-					</span>
-					<span>
-					 , 
-					</span>
-					<span>
-					{user.user.age}
-					</span>
-				</div>
-				<p className='occupation'> {user.user.occupation ? user.user.occupation : "Occupation"}</p>
-				<p className='companyName'> {user.user.job ? user.user.job : "Company"}</p>
-				</div>
-				<div className='about'>
-                    <h3>About me</h3>
-                    <p>{user.user.description === undefined || user.user.description === "" ? "Write something here!" : user.user.description}</p>
+                    <div className="pain">
+                        <div className='pro'>
+                            {user.user.name}, {user.user.age}
+                        </div>
+                        <div className="profile-title">
+                            {user.user.occupation ? user.user.occupation : "Occupation"}
+                            <br/>   
+                            {user.user.job ? user.user.job : "Company"}
+                        </div>
+                    </div>
+                    <div className='about'>
+                        <h3>About me</h3>
+                        <p>{user.user.description === undefined || user.user.description === "" ? "Write something here!" : parse(user.user.description.replaceAll("\n","<br/>"))}<br/></p>
+                    </div>
+                    <div className='profile-interests'>
+                        <h3>My Interests</h3>
+                        {
+                            interests.map((interest, idx) => {
+                                return (<p key={idx}>{interest}</p>)
+                            })
+                        }
+                    </div>
                 </div>
-                <div className='profile-interests'>
-                    <h3>My Interests</h3>
-                    {
-                        interests.map((interest, idx) => {
-                            return (<p key={idx}>{interest}</p>)
-                        })
-                    }
-				</div>
 			</div>
             <Navtab/>
         </div>

@@ -1,15 +1,42 @@
+
 .icon{
     display: flex;
     justify-content: center;
     height: 30px;
     margin: 20px;
 }
+
+.profile-screen{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 80px;
+}
+
+.PLEASE{
+    text-align: center;
+}
+
+.pain{
+    margin-left:15px;
+}
+
+.profile-title{
+    color: #C1C1C1;
+    font-weight: bold;
+}
+
 .profile-pic{
+    max-width: 320px;
     width: 95%;
-    height: 358px;
+    height: 400px;
+    max-height: 380px;
     margin-left: 10px;
     background-size: cover;
+    align-self: center;
+    display: inline-flex;
 }
+
 .profile-pic input{
     bottom: 0;
     float: right;
@@ -26,12 +53,9 @@
     color: #1EB955;
     font-size: 2em;
     font-weight: bold;
-    margin: 10px 10px 15px 10px;
     display: inline-block;
 }
-.designation, .companyName{
-    margin-left: 10px;
-}
+
 .about h3{
     color: green;
     font-size: 2em;
