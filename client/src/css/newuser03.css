@@ -1,0 +1,11 @@
+.formDiv{
+    font-size: large;
+}
+.finishBtn{
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+.finishBtn img{
+    width:150px;
+}

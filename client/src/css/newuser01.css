@@ -1,0 +1,21 @@
+.titleBtn{
+    display: flex;
+    justify-content: center;
+}
+.titleBtn img{
+    width:200px;
+}
+.setGreen{
+    color: green;
+    text-align: center;
+}
+.formDiv{
+    margin: 10px;
+}
+.formNext{
+    display: flex;
+    justify-content: center;
+}
+.formNext img{
+    width:150px;
+}

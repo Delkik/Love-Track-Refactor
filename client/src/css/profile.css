@@ -1,0 +1,66 @@
+.icon{
+    display: flex;
+    justify-content: center;
+    height: 30px;
+    margin: 20px;
+}
+.profile-pic{
+    width: 95%;
+    height: 300px;
+    margin-left: 10px;
+}
+.profile-pic input{
+    bottom: 0;
+    float: right;
+    width: 20%;
+}
+.userName, .comma, .age{
+    color: green;
+    font-size: 2em;
+    margin: 10px 10px 15px 10px;
+    display: inline-block;
+}
+.pro{
+    color: green;
+    font-size: 2em;
+    margin: 10px 10px 15px 10px;
+    display: inline-block;
+}
+.designation, .companyName{
+    margin-left: 10px;
+}
+.about h3{
+    color: green;
+    font-size: 2em;
+    display: inline-block;
+    margin: 5px 0px 0px 0px;
+    margin-left: 10px;
+}
+.about p{
+    margin: 5px 5px 5px 15px;
+    margin-left: 10px;
+}
+
+.interests h3{
+    color: green;
+    font-size: 2em;
+    margin: 0 0 5px 0;
+    margin-left: 10px;
+    margin-top: 20px;
+}
+.interests p{
+    display: inline-block;
+    margin: 5px 5px 5px 5px;
+    padding: 10px;
+    border-radius: 15px;
+    width: 80px;
+    background-color: gray;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+.nav_bar_profile{
+    margin-top: 75px;
+    display: flex;
+    justify-content: space-around;
+    padding: 18px;
+}

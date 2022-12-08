@@ -1,0 +1,46 @@
+.header{
+    height: 120px;
+    display: inline-block;
+}
+.left, .right, .left p, .right img{
+    display: inline-block;
+}
+.left p{
+    float: left;
+    font-size: 2em;
+    margin-right: 90px;
+    margin-left: 80px;
+    margin-top: 60px;
+}
+.right img{
+    float: right;
+    border-radius: 40px;
+    height: 80px;
+    width: 80px;
+    margin-top: 40px;
+    margin-left: 20px;
+}
+.chat{
+    height: 100px;
+    margin-left: 20px;
+    margin-top: 24px;
+    margin-bottom: 20px;
+}
+.chat td{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.name{
+    font-size: 1.5em;
+    vertical-align: bottom;
+}
+.message{
+    vertical-align: text-top;
+    font-size: 13px;
+    color: #A6A6A6;
+}
+.nav_bar_chat{
+    display: flex;
+    justify-content: space-around;
+    padding: 17px;
+}

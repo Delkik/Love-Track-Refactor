@@ -1,0 +1,72 @@
+.header_talking02{
+    margin-top: 30px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.left_talking02{
+    float: left;
+    clear: none;
+}
+.right_talking02{
+    float: right;
+    clear: none;
+}
+.name_talking02{
+    margin-left: 160px;
+    margin-bottom: 5px;
+    font-size: 2.5em;
+}
+.blank{
+    height: 350px;
+}
+.received_message{
+    height: 60px;
+    margin-bottom: 20px;
+}
+.received_message img{
+    float: left;
+    margin-left: 20px;
+}
+.received_message p{
+    margin-left: 90px;
+    background-color: green;
+    width: 50%;
+    font-size: larger;
+    font-weight: 1000;
+    clear: none;
+    padding: 15px;
+}
+.sent_message{
+    height: 60px;
+    margin-bottom: 20px;
+}
+.sent_message p{
+    float: right;
+    margin: 10px;
+    background-color: rgb(226, 230, 233);
+    color: black;
+    width: 60px;
+    font-size: larger;
+    font-weight: 1000;
+    padding: 15px;
+}
+.footer_talking02{
+    display: flex;
+    flex-direction: row;
+}
+.footer_talking02 img{
+    height: 50px;
+    width: 50px;
+    margin-top: 15px;
+    margin-left: 5px;
+}
+.footer_talking02 div{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+progress{
+    width: 100%;
+}
+#green{
+    color: rgb(7, 248, 7);
+}
