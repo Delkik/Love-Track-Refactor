@@ -5,9 +5,31 @@
 
 }
 
+.icon{
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+.settings-main{
+    display: flex;
+    justify-content: center;
+    padding: 15%;
+    padding-top: 15px;
+    margin-bottom: 30px;
+}
+
 .options{
     display: flex;
     align-items: center;
-    padding-bottom: 10%;
-    padding-top: 5%;
+    padding-bottom: 5px;
+    padding-top: 15px;
+}
+
+.settings-main input{
+    text-align: center;
+}
+
+.settings-button{
+    margin-top: 50px;
 }

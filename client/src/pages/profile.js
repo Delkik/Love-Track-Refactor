@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import "../styles/profile.css"
 import { useState } from "react";
 import { setUser } from "../redux/user";
+import Navbar from "../components/Navbar";
 import love_track_logo from "../images/love_track_logo.png"
+import { Navigate } from "react-router-dom";
 var parse = require('html-react-parser');
 
 export default function Profile(){
@@ -11,6 +13,12 @@ export default function Profile(){
     let user = useSelector(state => state.user.value)
     const [image, setImage] = useState()
     const dispatch = useDispatch()
+
+    if (Object.keys(user).length === 0){
+        return <Navigate to="/"/>
+    }
+
+
 	console.log(user)
 
     const interests = [
@@ -67,12 +75,9 @@ export default function Profile(){
 
     return (
         <div>
+            <Navbar/>
             <div className="profile-screen">
 
-				{/* <div> */}
-                    <div className='icon'>
-                        <img src={love_track_logo} alt='title icon' />
-                    </div>
                 <div className="profile-main">
                     <div className="PLEASE">
                         <img src={user.user.profile_img} className='profile-pic'/>

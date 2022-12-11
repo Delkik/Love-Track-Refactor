@@ -25,6 +25,7 @@ a {
 
 .screenSettings{
   padding-bottom: 80px;
+  padding-top: 80px;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -16,6 +16,7 @@ export default function RedirectUser({code}) {
     const dispatch = useDispatch();
 
     const [retry, setRetry] = useState(2)
+    const [kretry, setKRetry] = useState(2)
 
     useEffect(() => {
         if (!accessToken || retry === 0) return
@@ -55,7 +56,7 @@ export default function RedirectUser({code}) {
     }, [accessToken, userId])
 
     useEffect(() => {
-        if (userType !== "premium"){return}
+        if (userType !== "premium"  || kretry === 0){return}
         console.log(userData)
         fetch("http://localhost:5000/kmeans", {
             method: "POST",
@@ -70,8 +71,10 @@ export default function RedirectUser({code}) {
         })
         .catch(err => {
             console.log(err)
+            // console.log(retry)
+            setKRetry(kretry-1)
         })
-    }, [userType])
+    }, [userType, kretry])
 
     // Render loading screen or something
     if (userExists===undefined){

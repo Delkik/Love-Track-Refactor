@@ -19,9 +19,9 @@ function Loading({action}) {
     return (
         <div className="loading-main">
             <div className='titleBtn' id='titleBtn'>
-            <img className="logo" src={love_track_logo}/>
+                <img className="logo" src={love_track_logo}/>
                 <h1>LoveTrack</h1>
-              </div>
+            </div>
             <div className="quote">
                 <h1>{quote.quote}</h1>
                 <h3>- {quote.author}</h3>

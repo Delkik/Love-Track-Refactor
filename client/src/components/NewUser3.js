@@ -22,6 +22,17 @@ export default function NewUser3({childToParent}){
         return true;
 
     }
+
+    const position = async () => {
+      await navigator.geolocation.getCurrentPosition(
+        position => { 
+          console.log( {latitude: position.coords.latitude, 
+          longitude: position.coords.longitude})
+        }, 
+        err => console.log(err)
+      );
+    }
+    // position()
     
     const OnChangeHandler = (event,func) => {
       func(event.target.value)

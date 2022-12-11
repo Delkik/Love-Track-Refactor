@@ -11,7 +11,6 @@ import Social from './social';
 import Profile from './profile';
 import Settings from './settings';
 import Music from './music';
-// import Chat from './chat';
 import Lyrics from './lyrics';
 
 function App() {

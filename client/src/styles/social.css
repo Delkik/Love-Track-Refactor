@@ -1,0 +1,13 @@
+.social-empty{
+    text-align: center;
+    margin-top: 40%;
+}
+
+.social-empty h2{
+    font-size: 2rem;
+    color: #1EB955;
+}
+
+.social-empty p{
+    color: #C1C1C1;
+}

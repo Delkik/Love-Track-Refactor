@@ -12,7 +12,8 @@ export default function Navtab(){
     const navigate = useNavigate();
     const passData = (event, path) =>{
         navigate(path)
-   }
+    }
+    
     return(
         <div>
             <div className="nav-main">
