@@ -104,18 +104,14 @@ def get_tracks():
     print("i am working")
     sp = None
     try:
-        print(session,"TRACKS")
         token_info = session.get(TOKEN_INFO, None)
         sp = spotipy.Spotify(auth = token_info['access_token'])
     except:
         return {"msg":"no valid logged in user"}
-    print(str(sp.current_user_saved_tracks(limit=50, offset=0)['items']))
-    print("I have been called to get the tracks")
     l = []
     for j in range(10):
         songs = sp.current_user_saved_tracks(limit=50, offset=j*50)['items']
         for i in songs:
-            print(i)
             if i in l:
                 return dumps(l)
             album = i["track"]["album"]["name"].replace(" ", "-")
@@ -124,47 +120,29 @@ def get_tracks():
             uri = i["track"]["uri"]
             artist = i["track"]["artists"][0]["name"].replace(" ", "-")
             duration = i["track"]["duration_ms"]
-            print("name: " + name + "  image:  " + im + " . artist:  " + artist)
             item = {"name": name, "image":im, "artist":artist, "uri":uri, "album":album, "duration": duration}
-            #l.append(i)
             if len(i["track"]["artists"]) == 1:
                 l.append(item)
     return dumps(l)
-    #return l
 
 
 @app.route("/get_song_words", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def getLyrics():
     bdy = request.get_json()
-   # print(bdy[random.randint(0,len(bdy)-1)])
-    while True:
+    count = len(bdy)
+    while count:
         try:
-            bdy = bdy[random.randint(0,len(bdy)-1)]
-            print(bdy)
-            # #url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=" + bdy['n'] + "&q_artist=" + bdy['a'] + api_key
-            # url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=Barbed%20Wire&q_artist=Kendrick%20Lamar" + api_key
-            # r = requests.get(url)
-            # data = r.json()
-            # data = data['message']['body']
-            # print( data['lyrics']['lyrics_body'].split('\n')[1])
-            # #print(data['lyrics']['lyrics_body'].split('\n')[2])
-            # response = jsonify(lyric = data['lyrics']['lyrics_body'].split('\n')[1])
-            # return response
-            return jsonify(lyric = lyrics(bdy['n'], bdy['a']))
+            index = random.randint(0,len(bdy)-1)
+            song = bdy[index]
+            bdy.pop(index)
+            print("hi", song)
+            lyric = lyrics(song['name'], song['artist'])
+            print(lyric)
+            return jsonify(lyric)
         except:
-            return "Oops seeming to have difficutly with retrieving lyrics."
-    # t = get_tracks()
-    # print("i have been summoned")
-    # print("this is the request body")
-    # print(request.body)
-    # url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
-    # r = requests.get(url)
-    # data = r.json()
-    # data = data['message']['body']
-    # print(data['lyrics']['lyrics_body'].split('\n')[2])
-    # response = jsonify({"lyric":data['lyrics']['lyrics_body'].split('\n')[2],"song":"Sexy and I Know It"}) #replace with song name
-    # return response
+            count-=1
+    return {"msg":"Oops... Seeming to have difficulty with retrieving lyrics."}
 
 @app.route("/create_user", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -192,6 +170,7 @@ def update_user():
 @app.route("/match", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def match():
+    # just have it find users here
     user_data = request.data.decode("utf-8")
     user_data = json.loads(user_data)
     user_data.pop('_id', None)
@@ -238,7 +217,6 @@ def kmeans_train():
     # d = deepcopy(user_data)
 
     # CREATE THE GENRE LIST AND THATS IT
-    # DONT FORGET TO GIT LFS THE GENRE FILE
 
     return json.dumps({"kmeans":{}})
 
@@ -265,7 +243,6 @@ def refresh():
 @cross_origin(supports_credentials=True)
 def spotify():
     code = request.data.decode("utf-8")
-    # print(code,"SPOTIFY")
     sp = create_auth()
 
     session.clear()
@@ -273,7 +250,6 @@ def spotify():
     token_info = sp.get_access_token(code)
     session[TOKEN_INFO] = token_info
     session.modified = True
-    # print(session,token_info,"SPOTIFY")
 
     return json.dumps(
         {
@@ -352,16 +328,6 @@ def postChat():
         return dumps({"message":"succeeded in updating db"})
     except:
         return dumps({"message":"error with updating to db. please try again"})
-
-# def getToken():
-#     token_info = session.get("token_info", None)
-#     if not token_info:
-#         raise "exception"
-#     expired = token_info['expires_at'] - int(time.time())
-#     if expired < 60:
-#         oath = create_auth()
-#         token_info = oath.refresh_access_token(token_info['refresh_token'])
-#     return token_info
 
 if __name__ == "__main__":
     app.run("127.0.0.1")

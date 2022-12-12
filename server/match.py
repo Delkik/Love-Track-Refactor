@@ -11,6 +11,7 @@ def create_genre_list(df, songs):
     return
 
 def debug_create_genre_list(df):
+    # return first column for testing purposes so we are the same cluster
     return df.sample(n=1)
 
 def debug_kmeans(df,spotify_users):

@@ -36,7 +36,7 @@ export default function Profile(){
 
     function handleChange(event) {
         setImage(event.target.files[0])
-      }
+    }
 
     const fileHandler = (e) => {
         console.log(image)
@@ -81,7 +81,7 @@ export default function Profile(){
                 <div className="profile-main">
                     <div className="PLEASE">
                         <img src={user.user.profile_img} className='profile-pic'/>
-                        <input type='file' id='input-file' accept=".png,.jpg,.jpeg" name='Image Uploader' onChange={handleChange}/>
+                        <input type='file' id='input-file' accept="image/*" name='Image Uploader' onChange={handleChange}/>
                         <button type="submit" onClick={fileHandler}>Upload</button>
                     </div>
                     <div className="pain">

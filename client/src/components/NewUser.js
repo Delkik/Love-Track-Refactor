@@ -77,8 +77,7 @@ export default function NewUser({spotifyId, code}){
     else{
         // console.log()
         let d = Object.assign(Object.assign(data1,data2),data3)
-        const userData = {...d,genres:genres,profile_img:"https://i.imgur.com/V4RclNb.png",spotify_id: spotifyId}
-        console.log(userData)
+        const userData = {...d,genres:genres,profile_img:d["profile_img"]?d["profile_img"]:"https://i.imgur.com/V4RclNb.png",spotify_id: spotifyId}
         fetch("http://localhost:5000/create_user", {
             method: "POST",
             body: JSON.stringify(userData, function(k, v) { return v === undefined ? "" : v; }),
@@ -90,7 +89,6 @@ export default function NewUser({spotifyId, code}){
             const data = await res.json();
             dispatch(setUser({user:userData}))
             return <RedirectUser code={code}/>
-            // navigate("/home")
     })
         .catch(err => {
             console.log(err)
