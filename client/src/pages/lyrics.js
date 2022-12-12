@@ -12,7 +12,6 @@ import { setPotential } from "../redux/potentialMatches";
 export default function Lyrics(){
     let user_data = useSelector(state => state.user.value)
     let posts = useSelector(state => state.posts.value)
-    const [myUser, setMy] = useState(useSelector(state => state.user.value))
     const [lyrics, setLyrics] = useState({lyric:""})
     const [users, setUsers] = useState()
     const [tracks, setTracks] = useState(useSelector(state => state.songs.value))
@@ -20,58 +19,40 @@ export default function Lyrics(){
     const dispatch = useDispatch()
 
     const onChangeValue = (e) => {
-        // fetch("http://localhost:5000/user_tracks", {
-        //     method: "GET",
-        //     credentials:"include",
-        // }
-        
-        // ).then(async res => {
-        //     const data = await res.json()
-        //     setTracks(data)
-        //     console.log("this is the tracks data")
-        //     console.log(data)
-        //     // console.log(tracks)
-        // }).catch(error=>{
-        //     console.log(error)
-        //   })
 
-          console.log("these are the songs from redux")
-        console.log(tracks)
-          fetch("http://localhost:5000/get_song_words", {
+        fetch("http://localhost:5000/get_song_words", {
             method:"POST",
             credentials:"include",
             body:JSON.stringify(tracks),
             headers: {
                 'Content-Type':'application/json'
             },
-          }).then(async res => {
-             const data = await res.json()
-              console.log(data)
-             setLyrics(data.lyric)
+        }).then(async res => {
+            const data = await res.json()
+            console.log(data,"LYRICS")
+            setLyrics(data)
+            console.log(lyrics)
         }).catch(error=>{
             console.log(error)
-          })
+        })
 
     }
 
     const onStartMatching = (e) => {
-        console.log("this is myUser")
-        console.log(myUser)
         fetch("http://localhost:5000/get_all_users", {
             method:"GET",
             credentials:"include"
-          }).then(async res => {
-             const data = await res.json()
-             console.log("these are all the users")
-              console.log(data["allUsers"][0]["name"])
-              dispatch(setPotential(data["allUsers"]))
-             setUsers(data["allUsers"])
-             navigate("/music")
+        }).then(async res => {
+            const data = await res.json()
+            console.log("these are all the users")
+            console.log(data["allUsers"][0]["name"])
+            dispatch(setPotential(data["allUsers"]))
+            setUsers(data["allUsers"])
+            navigate("/music")
         }).catch(error=>{
             console.log(error)
-          })
-
-          navigate("/music")
+        })
+            navigate("/music")
         }
 
     const onPost = (e) => {
@@ -106,7 +87,7 @@ export default function Lyrics(){
     if (Object.keys(user_data).length === 0){
         return <Navigate to="/"/>
     }
-
+    console.log(lyrics)
     return(
         <div>
             <h2 className="titleHub">Lyrics Hub!</h2>

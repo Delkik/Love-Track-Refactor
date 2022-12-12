@@ -46,7 +46,7 @@ export default function Match(){
                     <h2>MATCHES</h2>
                 </div>
                 <div className='chats'>
-                    {
+                    { users.length ?
                         users.map((chat, idx) => {
                         return (
                             <div key={idx} className='chat'>
@@ -63,7 +63,11 @@ export default function Match(){
                                 </table>
                             </div>
                         )
-                        })
+                        }) : 
+                        <div className="social-empty">
+                            <h2>Nothing to see here!</h2>
+                            <p>Get started by matching with others!!</p>
+                        </div> 
                     }
                 </div>
             </div>
