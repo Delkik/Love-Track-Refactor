@@ -36,7 +36,7 @@ export default function Profile(){
 
     function handleChange(event) {
         setImage(event.target.files[0])
-      }
+    }
 
     const fileHandler = (e) => {
         console.log(image)
@@ -58,8 +58,8 @@ export default function Profile(){
                 return alert("Invalid File!")
             }
 
-            let d = user.user
-            Object.assign(d,{profile_img:data["link"]})
+            let d = {...user.user,profile_img:data["link"]}
+            // console.log(d)
             dispatch(setUser({user:d}))
             fetch("http://localhost:5000/update_user", {
                 method: 'PUT',
@@ -81,19 +81,23 @@ export default function Profile(){
                 <div className="profile-main">
                     <div className="PLEASE">
                         <img src={user.user.profile_img} className='profile-pic'/>
-                        <form onSubmit={fileHandler}>
-                            <input type='file' id='input-file' accept=".png,.jpg,.jpeg" name='Image Uploader' onChange={handleChange}/>
-                            <button type="submit">Upload</button>
-                        </form>
+                        <input type='file' id='input-file' accept="image/*" name='Image Uploader' onChange={handleChange}/>
+                        <button type="submit" onClick={fileHandler}>Upload</button>
                     </div>
                     <div className="pain">
                         <div className='pro'>
                             {user.user.name}, {user.user.age}
                         </div>
                         <div className="profile-title">
-                            {user.user.occupation ? user.user.occupation : "Occupation"}
+                            {
+                                user.user.occupation ? user.user.occupation : 
+                                user.user.school ? "Student" : "Home"
+                            }
                             <br/>   
-                            {user.user.job ? user.user.job : "Company"}
+                            {
+                                user.user.job ? user.user.job : 
+                                user.user.school ? user.user.school : "Unemployed"
+                            }
                         </div>
                     </div>
                     <div className='about'>

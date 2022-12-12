@@ -20,7 +20,6 @@ export default function RedirectUser({code}) {
 
     useEffect(() => {
         if (!accessToken || retry === 0) return
-        console.log(accessToken,"CURRENT")
         fetch("http://localhost:5000/current_user", {
             method: "GET",
             credentials:"include"
@@ -72,6 +71,7 @@ export default function RedirectUser({code}) {
         .catch(err => {
             console.log(err)
             // console.log(retry)
+            console.log(userData)
             setKRetry(kretry-1)
         })
     }, [userType, kretry])

@@ -68,6 +68,7 @@ export default function NewUser1({childToParent}) {
                   <input type="radio" name="lookingFor" id='rdLMale'  value="Male"/>Male
                   <input type="radio" name="lookingFor" id='rdLFemale' value="Female"/>Female
                   <input type="radio" name="lookingFor" id='rdLOther' value="Other"/>Other
+                  <input type="radio" name="lookingFor" id='rdLAny' value="Any"/>Any
                 </label>
               </form>
             </div>
