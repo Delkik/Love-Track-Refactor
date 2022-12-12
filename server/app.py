@@ -46,6 +46,9 @@ app = Flask(__name__)
 #CORS(app)
 CORS(app, resources={r"/*":{"origins":"*"}})
 
+DB_CLIENT = MongoClient(mongo_uri)
+
+
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
 app.config["SESSION_COOKIE_HTTPONLY"] = False
@@ -167,8 +170,7 @@ def getLyrics():
 @cross_origin(supports_credentials=True)
 def create_user():
     user_data = request.get_json()
-    client = MongoClient(mongo_uri)
-    db = client["main"]
+    db = DB_CLIENT["main"]
     user = db.accounts.insert_one(user_data)
     likes = db.likes.insert_one({
         "user":user_data["spotify_id"],
@@ -182,11 +184,11 @@ def update_user():
     user_data = request.data.decode("utf-8")
     user_data = json.loads(user_data)
     user_data.pop('_id', None)
-    client = MongoClient(mongo_uri)
-    db = client["main"]
+    db = DB_CLIENT["main"]
     user = db.accounts.replace_one({"spotify_id":user_data["spotify_id"]},user_data)
     return {}
 
+# have a threshold of when to call it again (first time should be on account creation)
 @app.route("/match", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def match():
@@ -194,8 +196,7 @@ def match():
     user_data = json.loads(user_data)
     user_data.pop('_id', None)
 
-    client = MongoClient(mongo_uri)
-    db = client["main"]
+    db = DB_CLIENT["main"]
     bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]}},{"genres":1,"_id":0,"spotify_id":1}).limit(1000)
     users = [i for i in bruh]
 
@@ -232,8 +233,7 @@ def kmeans_train():
     user_data = json.loads(user_data)
     user_data.pop('_id', None)
 
-    client = MongoClient(mongo_uri)
-    db = client["main"]
+    db = DB_CLIENT["main"]
 
     # d = deepcopy(user_data)
 
@@ -286,8 +286,7 @@ def spotify():
 @cross_origin(supports_credentials=True)
 def user():
     user_id = request.data.decode("utf-8")
-    client = MongoClient(mongo_uri)
-    db = client["main"]
+    db = DB_CLIENT["main"]
 
     user = db.accounts.find_one({"spotify_id":user_id})
 
@@ -312,10 +311,7 @@ def upload():
 @app.route("/posts", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def posts():
-    # if GET, return number of likes
-    # if POST, return and add to db
-    client = MongoClient(mongo_uri)
-    db = client["main"]
+    db = DB_CLIENT["main"]
     posts = db.posts
     if request.method == "GET":
         return dumps(posts.find().limit(30))
@@ -330,8 +326,7 @@ def posts():
 @cross_origin(supports_credentials=True)
 def like(id):
     user_id = request.data.decode("utf-8")
-    client = MongoClient(mongo_uri)
-    db = client["main"]
+    db = DB_CLIENT["main"]
     user = db.likes.find_one({"user":user_id})
     post = db.posts.find_one({"post_id":id})
     if user and id in user["liked"]:
@@ -342,7 +337,7 @@ def like(id):
         post["likes"]+=1
     db.likes.replace_one({"user":user_id},user)
     db.posts.replace_one({"post_id":id},post)
-    return dumps(db.posts.find({}).limit(30))
+    return dumps(db.posts.find({}).limit(20))
 
 @app.route("/addChat", methods = ['POST'])
 @cross_origin(supports_credentials=True)
@@ -370,4 +365,4 @@ def postChat():
 
 if __name__ == "__main__":
     app.run("127.0.0.1")
-    socketio.run(app, debug=True,port=5000)
+    # socketio.run(app, debug=True,port=5000)

@@ -1,43 +1,26 @@
 import { useState } from "react";
+import "../styles/newUser.css"
+import love_track_logo from "../images/love_track_logo.png"
+import "../styles/newUser.css"
 
 export default function NewUser1({childToParent}) {
-    const [name, setName] = useState();
-    const [age, setAge] = useState();
-    const [gender, setGender] = useState();
-    const [orientation, setOrientation] = useState();
-    const [relationshipType, setRelationshipType] = useState();
-    const [lookingFor, setLookingFor] = useState();
+    const [name, setName] = useState("");
+    const [age, setAge] = useState("");
+    const [gender, setGender] = useState("");
+    const [orientation, setOrientation] = useState("");
+    const [relationshipType, setRelationshipType] = useState("");
+    const [lookingFor, setLookingFor] = useState("");
 
     const completed = () => {
-    //   if (!name || !age || !gender || !orientation || !relationshipType || !lookingFor){
-    //     alert("Please fill in each box!")
-    //     return false;
-    //   }
-    //   if (age < 18){
-    //     alert("You must be 18 or older to use this app!")
-    //     return false;
-    //   }
+      if (!name || !age || !gender || !orientation || !relationshipType || !lookingFor){
+        alert("Please fill in each box!")
+        return false;
+      }
+      if (age < 18){
+        alert("You must be 18 or older to use this app!")
+        return false;
+      }
       return true;
-      // if (!age){
-      //   alert("Please enter an age!")
-      //   return false;
-      // }
-      // if (!gender){
-      //   alert("Please enter your gender!")
-      //   return false;
-      // }
-      // if (!name){
-      //   alert("Please enter a name!")
-      //   return false;
-      // }
-      // if (!name){
-      //   alert("Please enter a name!")
-      //   return false;
-      // }
-      // if (!name){
-      //   alert("Please enter a name!")
-      //   return false;
-      // }
     }
 
     const OnChangeHandler = (event,func) => {
@@ -48,30 +31,33 @@ export default function NewUser1({childToParent}) {
     return (
         <div className='screen'>
           <div className='screenSettings'>
-    
-            <div className='titleBtn' id='titleButton'>
-              <h1>LoveTrack</h1>
+            <div className="top">
+              <div className='titleBtn' id='titleButton'>
+                <img className="logo" src={love_track_logo}/>
+                <h1>LoveTrack</h1>
+              </div>
+      
+              <div>
+                <h3 className='setGreen'>W e l c o m e !</h3>
+              </div>
             </div>
-    
-            <div>
-              <h3 className='setGreen'>Welcome</h3>
-            </div>
+            
     
             <div className='formDiv'>
               <form>
                 <label onChange={(event) => {OnChangeHandler(event, setName)}}>First Name <br />
-                <input type="text" name="name"/>
+                <input className="input-name" type="text" name="name" defaultValue={name}/>
                 </label> <br />
                 <label onChange={(event) => {OnChangeHandler(event, setAge)}}>Age<br />
-                <input type="text" name="age" />
+                <input className="input-age" type="text" name="age" defaultValue={age}/>
                 </label><br /> 
                 <label onChange={(event) => {OnChangeHandler(event, setGender)}}> Gender<br />
-                  <input type="radio" name="gender" id='rdGMale'  value="Male"/>Male
+                  <input type="radio" name="gender" id='rdGMale'  value="Male" />Male
                   <input type="radio" name="gender" id='rdGFemale' value="Female"/>Female
                   <input type="radio" name="gender" id='rdGOther' value="Other"/>Other
                 </label><br />
                 <label onChange={(event) => {OnChangeHandler(event, setOrientation)}}>Sexual Orientation<br />
-                <input type="text" name="sexualOrientation" />
+                <input type="text" name="sexualOrientation" defaultValue={orientation}/>
                 </label><br />
     
                 <label onChange={(event) => {OnChangeHandler(event, setRelationshipType)}}> Type of Relationship?<br />
@@ -85,7 +71,7 @@ export default function NewUser1({childToParent}) {
                 </label>
               </form>
             </div>
-            <button onClick={() => {
+            <button className="next-button" onClick={() => {
               if (completed()){
                 childToParent(
                   {
@@ -98,7 +84,7 @@ export default function NewUser1({childToParent}) {
                   }, 1)
               }
             }}>
-                Next
+                N E X T
             </button>
           </div>
         </div>  

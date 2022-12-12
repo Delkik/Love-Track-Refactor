@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client"
 import Chat from "../components/ChatBox";
 import xButton from "../images/whiteXButton.png"
-
+import { Navigate } from "react-router-dom";
 
 
 
@@ -19,6 +19,7 @@ import xButton from "../images/whiteXButton.png"
 export default function Music(){
     const dispatch = useDispatch()
     let tokens = useSelector(state => state.tokens.value)
+    let user_data = useSelector(state => state.user.value)
     const navigate = useNavigate()
     const [clicked, setClicked] = useState(false)
     const [leftChat, setLeftChat] = useState(false)
@@ -26,6 +27,10 @@ export default function Music(){
     const [socketI, setSocket] = useState("")
     const [potUsers, setPot] = useState(useSelector(state => state.potentials.value))
     const [userName, setUsername] = useState("")
+
+    if (Object.keys(user_data).length === 0){
+        return <Navigate to="/"/>
+    }
 
     const onClick = () => {
         setClicked(true)

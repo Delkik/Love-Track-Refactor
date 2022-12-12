@@ -1,12 +1,16 @@
 import { useState } from "react";
+import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
+import RangeSlider from 'react-bootstrap-range-slider';
+import "../styles/newUser.css"
 
 export default function NewUser3({childToParent}){
     const [occupation, setOccupation] = useState();
+    const [job, setJob] = useState();
     const [school, setSchool] = useState();
     const [description, setDescription] = useState();
     const [favoriteColor, setFavoriteColor] = useState();
     const [location, setLocation] = useState();
-    const [locationRange, setLocationRange] = useState();
+    const [locationRange, setLocationRange] = useState(0);
     const [ageRange, setAgeRange] = useState();
 
 
@@ -18,6 +22,17 @@ export default function NewUser3({childToParent}){
         return true;
 
     }
+
+    const position = async () => {
+      await navigator.geolocation.getCurrentPosition(
+        position => { 
+          console.log( {latitude: position.coords.latitude, 
+          longitude: position.coords.longitude})
+        }, 
+        err => console.log(err)
+      );
+    }
+    // position()
     
     const OnChangeHandler = (event,func) => {
       func(event.target.value)
@@ -35,11 +50,14 @@ export default function NewUser3({childToParent}){
               <label onChange={(event) => {OnChangeHandler(event, setOccupation)}}>Occupation <br />
               <input type="text" name="occupation" />
               </label> <br />
+              <label onChange={(event) => {OnChangeHandler(event, setJob)}}>Company<br />
+              <input type="text" name="jobTitle" />
+              </label> <br />
               <label onChange={(event) => {OnChangeHandler(event, setSchool)}}>School<br />
               <input type="text" name="school" />
               </label> <br />
               <label onChange={(event) => {OnChangeHandler(event, setDescription)}}>Description<br />
-              <input type="textarea" name="description" />
+              <textarea rows="6" cols="30" className="new-description"/>
               </label> <br />
               <label onChange={(event) => {OnChangeHandler(event, setFavoriteColor)}}>Favorite Color<br />
               <input type="text" name="color" />
@@ -49,7 +67,11 @@ export default function NewUser3({childToParent}){
               <input type='button' name="locationBtn" value='find' />
               </label> <br />
               <label onChange={(event) => {OnChangeHandler(event, setLocationRange)}}>Location Range<br />
-                <input type="text" name="locationRange" />
+              <RangeSlider
+                value={locationRange}
+                // defaultValue={data.user.locationRange}
+                onChange={changeEvent => {setLocationRange(changeEvent.target.value)}}
+              />
               </label> <br />
               <label onChange={(event) => {OnChangeHandler(event, setAgeRange)}}>Age Preference<br />
                 <input type="text" name="agePreference" />
@@ -57,11 +79,19 @@ export default function NewUser3({childToParent}){
             </form>
           </div>
         </div>
-    <button onClick={() => {
+    <button className="next-button" onClick={() => {
+      if (completed()){
+        childToParent({},-1)
+      }
+    }}>
+        Previous 
+    </button>
+    <button className="next-button" onClick={() => {
         if (completed()){
           childToParent(
             {
                 occupation: occupation,
+                job: job,
                 school: school,
                 description: description,
                 favoriteColor: favoriteColor,
@@ -72,14 +102,7 @@ export default function NewUser3({childToParent}){
             )
         }
       }}>
-          Next
-      </button>
-      <button onClick={() => {
-        if (completed()){
-          childToParent({},-1)
-        }
-      }}>
-          Previous
+          Finish
       </button>
     </div>
     )
