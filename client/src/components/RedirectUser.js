@@ -29,7 +29,7 @@ export default function RedirectUser({code}) {
             setUserId(data.user.id)
         })
         .catch(err => {
-            setRetry(retry)
+            setRetry(retry-1)
             // window.location = '/'
         })
     }, [accessToken, retry])
@@ -77,9 +77,9 @@ export default function RedirectUser({code}) {
         return <div>Gathering data on User...</div>
     }
 
-    if (userType !== "premium"){
-        return <div>BRUH</div>
-    }
+    // if (userType !== "premium"){
+    //     return <div>BRUH</div>
+    // }
 
     if (userData.user){
         window.history.pushState({}, null, "/")

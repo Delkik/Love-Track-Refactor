@@ -3,6 +3,7 @@ import tokenReducer from "./tokens"
 import userReducer from "./user"
 import postsReducer from "./posts"
 import likesReducer from "./likes"
+import SongsReducer from "./songs"
 import potentialReducer from "./potentialMatches"
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
@@ -23,6 +24,11 @@ const persistConfigPosts = {
   storage,
 }
 
+const persistConfigSongs = {
+  key: 'songs',
+  storage,
+}
+
 const persistConfigLikes = {
   key: 'likes',
   storage,
@@ -39,6 +45,8 @@ const allReducers = combineReducers({
     posts: persistReducer(persistConfigPosts, postsReducer),
     likes: persistReducer(persistConfigLikes, likesReducer),
     potentials: persistReducer(persistConfigPotential, potentialReducer),
+    songs: persistReducer(persistConfigSongs, SongsReducer)
+
 
 });
 

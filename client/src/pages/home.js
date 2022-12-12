@@ -4,13 +4,15 @@ import { Link } from "react-router-dom";
 import "../styles/HomePage.css"
 import settings from "../images/settings_button.png"
 import match from "../images/matching_button.png"
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react";
 import { setSongs } from "../redux/songs";
 
 export default function HomePage(){
     // const user = useSelector(state => state.user.value)
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const tokens = useSelector(state => state.tokens.value)
     // console.log(user, tokens)
     console.log(tokens)

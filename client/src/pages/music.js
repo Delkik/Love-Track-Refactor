@@ -41,7 +41,7 @@ export default function Music(){
     const onClickX = () =>{
         setClicked(false)
         setLeftChat(true)
-        dispatch(setChat(true))
+        // dispatch(setChat(true))
         navigate("/home",)
 
         //console.log(potUsers)

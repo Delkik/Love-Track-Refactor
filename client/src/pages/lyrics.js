@@ -5,12 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from 'uuid';
 import Navtab from "../components/Navtab";
 import { setPosts } from "../redux/posts";
+import { setPotential } from "../redux/potentialMatches";
+
 
 export default function Lyrics(){
     let user_data = useSelector(state => state.user.value)
     let posts = useSelector(state => state.posts.value)
-
+    const [myUser, setMy] = useState(useSelector(state => state.user.value))
     const [lyrics, setLyrics] = useState({lyric:""})
+    const [users, setUsers] = useState()
     const [tracks, setTracks] = useState(useSelector(state => state.songs.value))
     const navigate = useNavigate()
     const dispatch = useDispatch()
