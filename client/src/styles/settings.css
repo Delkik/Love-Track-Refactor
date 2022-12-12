@@ -1,13 +1,35 @@
-.screen{
+.settings-screen{
     float: left;
     margin-top: 6%;
     padding: 15%;
 
 }
 
+.icon{
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+.settings-main{
+    display: flex;
+    justify-content: center;
+    padding: 15%;
+    padding-top: 15px;
+    margin-bottom: 30px;
+}
+
 .options{
     display: flex;
     align-items: center;
-    padding-bottom: 15%;
-    padding-top: 10%;
+    padding-bottom: 5px;
+    padding-top: 15px;
+}
+
+.settings-main input{
+    text-align: center;
+}
+
+.settings-button{
+    margin-top: 50px;
 }

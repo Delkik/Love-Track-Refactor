@@ -1,0 +1,25 @@
+.navbar-icon{
+    height: 30px;
+    margin-top: 20px;
+    margin-left: 70px;
+}
+
+.settings-icon{
+    margin: 18px;
+    float: right;
+}
+
+.navbar-main{
+    background-color: #0D0D0D;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    /* align-content: center; */
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.navbar-item{
+    display: inline-block;
+}

@@ -1,11 +1,10 @@
-import numpy as np
 import pandas as pd
 import random
 
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from kneed import KneeLocator
 from sklearn.decomposition import PCA
+import time
 
 def create_genre_list(df, songs):
     
@@ -34,21 +33,25 @@ def debug_kmeans(df,spotify_users):
     users["Cluster"] = list(kmeans.labels_)
     return {"cluster":random.choice(list(kmeans.labels_))}
 
+# limit to 10k
 def kmeans(spotify_users, df):
 
 
-    d = spotify_users
+    # d = spotify_users
     # print(type(d))
     # for i in ["_id","name","age","gender","lookingFor","relationshipType","orientation","interests","test","occupation","school","description","favoriteColor","location","locationRange","ageRange","spotify_id","bio","profile_img","cluster"]:
     #     d.pop(i,None)
     
-    print(d)
+    # print(d)
     
     # d = pd.DataFrame(d)
     # print(list(df.columns))
+    now = time.time()
+    df = pd.read_csv("test_users.csv")
 
     new_df = df.drop(columns=["spotify_id"])
-    users = new_df.sample(n=3000)
+    users = new_df.sample(n=10000)
+    # users = new_df
     scaler = StandardScaler()
     scaled_features = scaler.fit_transform(users)
 
@@ -61,4 +64,8 @@ def kmeans(spotify_users, df):
     kmeans.fit(df_pca)
 
     users["Cluster"] = list(kmeans.labels_)
+    print(time.time() - now)
+    # return users
     return {"cluster":random.choice(list(kmeans.labels_))}
+
+# print(kmeans(1,""))

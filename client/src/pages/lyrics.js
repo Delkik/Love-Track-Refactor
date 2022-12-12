@@ -4,6 +4,7 @@ import "../styles/lyrics.css"
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from 'uuid';
 import Navtab from "../components/Navtab";
+import { Navigate } from "react-router-dom";
 import { setPosts } from "../redux/posts";
 
 export default function Lyrics(){
@@ -60,7 +61,11 @@ export default function Lyrics(){
 
     useEffect(() => {
         onChangeValue()
-      }, []);
+    }, []);
+
+    if (Object.keys(user_data).length === 0){
+        return <Navigate to="/"/>
+    }
 
     return(
         <div>

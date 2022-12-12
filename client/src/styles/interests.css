@@ -1,0 +1,10 @@
+.titleBtn{
+    display: flex;
+    justify-content: center;
+}
+
+.wrapList{
+    justify-content: center;
+    margin-top: 10%;
+    margin-bottom: 100px;
+}

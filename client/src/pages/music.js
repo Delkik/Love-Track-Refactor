@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import io from "socket.io-client"
 import Chat from "../components/ChatBox";
 import xButton from "../images/whiteXButton.png"
-
+import { Navigate } from "react-router-dom";
 
 
 //  let socket = io.connect("http://localhost:5000")
@@ -18,9 +18,14 @@ import xButton from "../images/whiteXButton.png"
 export default function Music(){
 
     let tokens = useSelector(state => state.tokens.value)
+    let user_data = useSelector(state => state.user.value)
     const navigate = useNavigate()
     const [clicked, setClicked] = useState(false)
     const [socketI, setSocket] = useState("")
+
+    if (Object.keys(user_data).length === 0){
+        return <Navigate to="/"/>
+    }
 
     const onClick = () => {
         setClicked(true)

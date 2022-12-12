@@ -1,22 +1,26 @@
 import Navtab from "../components/Navtab";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Navbar from "../components/Navbar";
 import "../styles/match.css"
+import { Navigate } from "react-router-dom";
 
 export default function Match(){
 	// const [data, setData] = useState();
 	const [pythonData, setPythonData] = useState();
     let data = useSelector(state => state.user.value)
-    console.log(data)
+
+    if (Object.keys(data).length === 0){
+        return <Navigate to="/"/>
+    }
 
     const users = [
-        {name:"Lana Rose", picture:"hi", preview:"DTF? (Down to Fish)"},
-        {name:"Andrew Tate", picture:"hi", preview:"DTF? (Down to Fish)"},
-        {name:"Monica Vernandez", picture:"hi", preview:"DTF? (Down to Fish)"},
-        {name:"Alia Suave", picture:"hi", preview:"DTF? (Down to Fish)"},
-        {name:"Shostam Barvav", picture:"hi", preview:"DTF? (Down to Fish)"},
-        {name:"Justin Williams", picture:"hi", preview:"DTF? (Down to Fish)"}
+        {name:"Lana Rose", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
+        {name:"Andrew Tate", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
+        {name:"Monica Vernandez", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
+        {name:"Alia Suave", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
+        {name:"Shostam Barvav", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
+        {name:"Justin Williams", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"}
     ]
 
 	// useEffect(() =>{
@@ -36,34 +40,33 @@ export default function Match(){
 
     return (
         <div>
-        <div className='screenSettings'>
-            <div className='match-header'>
-            <div className='left'>
-                <p>MATCHES</p>
+            <Navbar/>
+            <div className='screenSettings'>
+                <div className='match-header'>
+                    <h2>MATCHES</h2>
+                </div>
+                <div className='chats'>
+                    {
+                        users.map((chat, idx) => {
+                        return (
+                            <div key={idx} className='chat'>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td rowSpan={2}> <img className="match-image" src={chat.picture} alt="hi"></img></td>
+                                            <td className='name'>{chat.name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className='message'>{chat.preview}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        )
+                        })
+                    }
+                </div>
             </div>
-            </div>
-            <div className='chats'>
-                {
-                    users.map((chat, idx) => {
-                    return (
-                        <div key={idx} className='chat'>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td rowSpan={2}> {chat.picture}</td>
-                                        <td className='name'>{chat.name}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className='message'>{chat.preview}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    )
-                    })
-                }
-            </div>
-        </div>
             <Navtab/>
         </div>
     )
