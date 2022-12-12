@@ -81,9 +81,9 @@ export default function RedirectUser({code}) {
         return <Loading action={"Gathering data on User"} />
     }
 
-    if (userType !== "premium"){
-        return <div>BRUH</div>
-    }
+    // if (userType !== "premium"){
+    //     return <div>BRUH</div>
+    // }
 
     if (userData.user){
         window.history.pushState({}, null, "/")

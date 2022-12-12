@@ -6,6 +6,7 @@ import requests
 import random
 import spotipy
 import uuid
+from lyric_generator import *
 
 from copy import deepcopy
 
@@ -34,7 +35,10 @@ IMGUR_CLIENT_ID = os.environ.get("IMGUR_CLIENT_ID")
 IMGUR_CLIENT_SECRET = os.environ.get("IMGUR_CLIENT_SECRET")
 authMechanism = "DEFAULT"
 
+NEW_USER = "m001-student"
+PASS = "capstone"
 mongo_uri = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@{DB_CLUSTER_URL}/?authMechanism={authMechanism}"
+mongo_uri2 = f"mongodb+srv://{NEW_USER}:{PASS}@sandbox.679hr.mongodb.net/?authMechanism={authMechanism}"
 
 base_url = "https://api.musixmatch.com/ws/1.1/"
 api_key = "&apikey=b47d930cf4a671795d7ab8b83fd74471"
@@ -114,16 +118,16 @@ def get_tracks():
             print(i)
             if i in l:
                 return dumps(l)
-            album = i["track"]["album"]["name"].replace(" ", "%20")
-            name = i["track"]["name"].replace(" ", "%20")
+            album = i["track"]["album"]["name"].replace(" ", "-")
+            name = i["track"]["name"].replace(" ", "-")
             im = i["track"]["album"]["images"][1]["url"]
             uri = i["track"]["uri"]
-            artist = i["track"]["album"]["artists"][0]["name"].replace(" ", "%20")
+            artist = i["track"]["artists"][0]["name"].replace(" ", "-")
             duration = i["track"]["duration_ms"]
             print("name: " + name + "  image:  " + im + " . artist:  " + artist)
             item = {"name": name, "image":im, "artist":artist, "uri":uri, "album":album, "duration": duration}
             #l.append(i)
-            if len(i["track"]["album"]["artists"]) == 1:
+            if len(i["track"]["artists"]) == 1:
                 l.append(item)
     return dumps(l)
     #return l
@@ -132,17 +136,35 @@ def get_tracks():
 @app.route("/get_song_words", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def getLyrics():
-    t = get_tracks()
-    print("i have been summoned")
-    print("this is the request body")
-    print(request.body)
-    url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
-    r = requests.get(url)
-    data = r.json()
-    data = data['message']['body']
-    print(data['lyrics']['lyrics_body'].split('\n')[2])
-    response = jsonify({"lyric":data['lyrics']['lyrics_body'].split('\n')[2],"song":"Sexy and I Know It"}) #replace with song name
-    return response
+    bdy = request.get_json()
+   # print(bdy[random.randint(0,len(bdy)-1)])
+    while True:
+        try:
+            bdy = bdy[random.randint(0,len(bdy)-1)]
+            print(bdy)
+            # #url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=" + bdy['n'] + "&q_artist=" + bdy['a'] + api_key
+            # url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=Barbed%20Wire&q_artist=Kendrick%20Lamar" + api_key
+            # r = requests.get(url)
+            # data = r.json()
+            # data = data['message']['body']
+            # print( data['lyrics']['lyrics_body'].split('\n')[1])
+            # #print(data['lyrics']['lyrics_body'].split('\n')[2])
+            # response = jsonify(lyric = data['lyrics']['lyrics_body'].split('\n')[1])
+            # return response
+            return jsonify(lyric = lyrics(bdy['n'], bdy['a']))
+        except:
+            return "Oops seeming to have difficutly with retrieving lyrics."
+    # t = get_tracks()
+    # print("i have been summoned")
+    # print("this is the request body")
+    # print(request.body)
+    # url = base_url + "matcher.lyrics.get?format=json&callback=callback&q_track=sexy%20and%20i%20know%20it&q_artist=lmfao" + api_key
+    # r = requests.get(url)
+    # data = r.json()
+    # data = data['message']['body']
+    # print(data['lyrics']['lyrics_body'].split('\n')[2])
+    # response = jsonify({"lyric":data['lyrics']['lyrics_body'].split('\n')[2],"song":"Sexy and I Know It"}) #replace with song name
+    # return response
 
 @app.route("/create_user", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -190,6 +212,18 @@ def match():
     if user == []:
         return json.dumps({"kmeans":{}})
     return json.dumps({"kmeans":cluster})
+
+@app.route("/get_all_users", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def allUser():
+    client = MongoClient(mongo_uri)
+    db = client["main"]
+    users = db.accounts.find({})
+    peeps = []
+    print("getting all users!")
+    for d in users:
+        peeps.append(d)
+    return dumps({"allUsers":peeps})
 
 
 @app.route("/kmeans", methods=['GET','POST'])
@@ -304,6 +338,20 @@ def like(id):
     db.likes.replace_one({"user":user_id},user)
     db.posts.replace_one({"post_id":id},post)
     return dumps(db.posts.find({}).limit(20))
+
+@app.route("/addChat", methods = ['POST'])
+@cross_origin(supports_credentials=True)
+def postChat():
+    bdy = request.get_json()
+    print(bdy)
+    client = MongoClient(mongo_uri2)
+    db = client["chatHistory"]
+    try:
+        db.chats.insert_one({bdy["name"]:bdy["history"]})
+        print("I added to db \n\n\n")
+        return dumps({"message":"succeeded in updating db"})
+    except:
+        return dumps({"message":"error with updating to db. please try again"})
 
 # def getToken():
 #     token_info = session.get("token_info", None)

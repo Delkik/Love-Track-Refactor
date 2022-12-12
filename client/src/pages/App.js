@@ -26,7 +26,6 @@ function App() {
             <Route path="/profile" element={<Profile/>} />
             <Route path="/settings" element={<Settings/>} />
             <Route path="/music" element={<Music/>} />
-            {/* <Route path="/chat" element={<Chat/>} /> */}
             <Route path="/lyrics" element = {<Lyrics/>}/>
           </Routes>
       </Router>
