@@ -3,6 +3,7 @@ import tokenReducer from "./tokens"
 import userReducer from "./user"
 import postsReducer from "./posts"
 import likesReducer from "./likes"
+import potentialReducer from "./potentialMatches"
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
@@ -27,11 +28,18 @@ const persistConfigLikes = {
   storage,
 }
 
+const persistConfigPotential = {
+  key: 'potentials',
+  storage,
+}
+
 const allReducers = combineReducers({
     user: persistReducer(persistConfigUser, userReducer),
     tokens: persistReducer(persistConfigTokens, tokenReducer),
     posts: persistReducer(persistConfigPosts, postsReducer),
     likes: persistReducer(persistConfigLikes, likesReducer),
+    potentials: persistReducer(persistConfigPotential, potentialReducer),
+
 });
 
 export const store = configureStore({

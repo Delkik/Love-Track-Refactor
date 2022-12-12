@@ -35,7 +35,10 @@ IMGUR_CLIENT_ID = os.environ.get("IMGUR_CLIENT_ID")
 IMGUR_CLIENT_SECRET = os.environ.get("IMGUR_CLIENT_SECRET")
 authMechanism = "DEFAULT"
 
+NEW_USER = "m001-student"
+PASS = "capstone"
 mongo_uri = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@{DB_CLUSTER_URL}/?authMechanism={authMechanism}"
+mongo_uri2 = f"mongodb+srv://{NEW_USER}:{PASS}@sandbox.679hr.mongodb.net/?authMechanism={authMechanism}"
 
 base_url = "https://api.musixmatch.com/ws/1.1/"
 api_key = "&apikey=b47d930cf4a671795d7ab8b83fd74471"
@@ -209,6 +212,18 @@ def match():
         return json.dumps({"kmeans":{}})
     return json.dumps({"kmeans":cluster})
 
+@app.route("/get_all_users", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def allUser():
+    client = MongoClient(mongo_uri)
+    db = client["main"]
+    users = db.accounts.find({})
+    peeps = []
+    print("getting all users!")
+    for d in users:
+        peeps.append(d)
+    return dumps({"allUsers":peeps})
+
 
 @app.route("/kmeans", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -328,6 +343,20 @@ def like(id):
     db.likes.replace_one({"user":user_id},user)
     db.posts.replace_one({"post_id":id},post)
     return dumps(db.posts.find({}).limit(30))
+
+@app.route("/addChat", methods = ['POST'])
+@cross_origin(supports_credentials=True)
+def postChat():
+    bdy = request.get_json()
+    print(bdy)
+    client = MongoClient(mongo_uri2)
+    db = client["chatHistory"]
+    try:
+        db.chats.insert_one({bdy["name"]:bdy["history"]})
+        print("I added to db \n\n\n")
+        return dumps({"message":"succeeded in updating db"})
+    except:
+        return dumps({"message":"error with updating to db. please try again"})
 
 # def getToken():
 #     token_info = session.get("token_info", None)

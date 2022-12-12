@@ -50,6 +50,26 @@ export default function Lyrics(){
 
     }
 
+    const onStartMatching = (e) => {
+        console.log("this is myUser")
+        console.log(myUser)
+        fetch("http://localhost:5000/get_all_users", {
+            method:"GET",
+            credentials:"include"
+          }).then(async res => {
+             const data = await res.json()
+             console.log("these are all the users")
+              console.log(data["allUsers"][0]["name"])
+              dispatch(setPotential(data["allUsers"]))
+             setUsers(data["allUsers"])
+             navigate("/music")
+        }).catch(error=>{
+            console.log(error)
+          })
+
+          navigate("/music")
+        }
+
     const onPost = (e) => {
         const post_data = {
             user:user_data.user.spotify_id,
@@ -86,7 +106,7 @@ export default function Lyrics(){
             <p className = "lyrics">{lyrics.lyric}</p>
             <h4 className = "regenerate" onClick={onChangeValue}>Regenerate Lyrics</h4>
             <h4 className = "likeLyric" onClick={(event) => {onPost(event)}}>Show off the Lyric!</h4>
-            <h4 className = "nextPage" onClick={() => {navigate("/music")}}>Start matching!!</h4>
+            <h4 className = "nextPage" onClick={onStartMatching}>Start matching!!</h4>
             <Navtab/>
         </div>
     )
