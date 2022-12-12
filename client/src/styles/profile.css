@@ -21,11 +21,8 @@
 }
 
 .profile-pic{
-    max-width: 320px;
-    width: 95%;
-    height: 400px;
+    max-width: 95%;
     max-height: 380px;
-    margin-left: 10px;
     background-size: cover;
     align-self: center;
     display: inline-flex;
