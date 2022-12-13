@@ -12,7 +12,7 @@ function NewUser02() {
             Interests
           </h1>
         </div>
-        <div className='formDiv'>
+        <div className='formDiv02'>
           <form>
             <input type="button" name="btnCars" value='Cars' />
             <input type="button" name="btnCars" value='Gym' /> <br /><br />

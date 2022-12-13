@@ -17,7 +17,7 @@ function NewUser01() {
           <h3 className='setGreen'>Welcome</h3>
         </div>
 
-        <div className='formDiv'>
+        <div className='formDiv01'>
           <form>
             <label>First Name <br />
             <input type="text" name="name" />

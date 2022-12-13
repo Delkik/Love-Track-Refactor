@@ -9,8 +9,17 @@
     color: green;
     text-align: center;
 }
-.formDiv{
+.formDiv01{
     margin: 10px;
+}
+.formDiv01 input{
+    margin-left: 40px;
+    margin-right: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 5px;
+    font-size: larger;
+    border-radius: 50px;
 }
 .formNext{
     display: flex;
@@ -18,4 +27,5 @@
 }
 .formNext img{
     width:150px;
+    border-radius: 50px;
 }

@@ -2,12 +2,14 @@
     display: flex;
     justify-content: center;
 }
-.formDiv input{
+.formDiv02 input{
     margin-left:60px;
     margin-right: 20px;
     margin-top: 10px;
     margin-bottom: 20px;
+    padding: 10px;
     font-size: larger;
+    border-radius: 50px;
 }
 
 .formNext{
@@ -16,5 +18,5 @@
 }
 .formNext img{
     width:150px;
-    margin-top: 150px;
+    margin-top: 10px;
 }

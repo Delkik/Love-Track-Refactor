@@ -8,7 +8,7 @@ function NewUser03() {
   return (
     <div className='screen'>
       <div className='screenSettings'>
-        <div className='formDiv'>
+        <div className='formDiv03'>
           <form>
             <label> Upload your Image <br />
               <input type='file' name='image' accept='image/*' />
