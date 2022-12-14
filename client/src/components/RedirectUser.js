@@ -87,9 +87,9 @@ export default function RedirectUser({code}) {
         return <Loading action={"Gathering data on User"} />
     }
 
-    if (userType !== "premium"){
-        return <ErrorPage status={400} action={"Come back when you have premium!"}/>
-    }
+    // if (userType !== "premium"){
+    //     return <ErrorPage status={400} action={"Come back when you have premium!"}/>
+    // }
 
     if (userData.user){
         window.history.pushState({}, null, "/")

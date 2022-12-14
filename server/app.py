@@ -14,6 +14,7 @@ from bson.json_util import dumps
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, session, request
 from flask_cors import CORS, cross_origin
+from flask_session import Session
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from lyric_generator import *
 from match import *
@@ -43,18 +44,21 @@ mongo_uri2 = f"mongodb+srv://{NEW_USER}:{PASS}@sandbox.679hr.mongodb.net/?authMe
 
 base_url = "https://api.musixmatch.com/ws/1.1/"
 api_key = "&apikey=b47d930cf4a671795d7ab8b83fd74471"
-app = Flask(__name__)
 #CORS(app)
-CORS(app, resources={r"/*":{"origins":"*"}})
 
 DB_CLIENT = MongoClient(mongo_uri)
 
+app = Flask(__name__)
 
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
 app.config["SESSION_COOKIE_HTTPONLY"] = False
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = './.flask_session/'
 socketio = SocketIO(app,cors_allowed_origins="*")
 TOKEN_INFO = "code"
+CORS(app, resources={r"/*":{"origins":"*"}})
+Session(app)
 
 @socketio.on('join')
 def on_join(data):
@@ -81,28 +85,33 @@ def connected():
     print("client has connected")
     emit("connect",{"data":f"id: {request.sid} is connected"})
 
-def create_auth():
+def create_auth(cache_handler):
     return SpotifyOAuth(
         scope=scope,
         client_id=SPOTIFY_CLIENT_ID,
         client_secret=SPOTIFY_CLIENT_SECRET,
-        redirect_uri=REDIRECT)
+        redirect_uri=REDIRECT,
+        cache_handler=cache_handler
+        )
 
 @app.route("/current_user", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def current_user():
-    token_info = session.get(TOKEN_INFO, None)
-    client = spotipy.client.Spotify(auth=token_info["access_token"])
-    user = client.me()
-    return json.dumps({"user":user})
+    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
+    auth_manager = create_auth(cache_handler)
+
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    return json.dumps({"user":spotify.current_user()})
 
 @app.route("/user_tracks", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def get_tracks():
     sp = None
     try:
-        token_info = session.get(TOKEN_INFO, None)
-        sp = spotipy.Spotify(auth = token_info['access_token'])
+        cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
+        auth_manager = create_auth(cache_handler)
+
+        sp = spotipy.Spotify(auth_manager=auth_manager)
     except:
         return {"msg":"no valid logged in user"}
     l = []
@@ -219,11 +228,10 @@ def kmeans_train():
 @cross_origin(supports_credentials=True)
 def refresh():
 
-    token_info = session.get(TOKEN_INFO, None)
-    if not token_info:
-        raise "No Session!"
-    
-    sp = create_auth()
+    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
+    auth_manager = create_auth(cache_handler)
+
+    sp = spotipy.Spotify(auth_manager=auth_manager)
     token_info = sp.refresh_access_token(token_info["refresh_token"])
     session[TOKEN_INFO] = token_info
 
@@ -238,11 +246,15 @@ def refresh():
 @cross_origin(supports_credentials=True)
 def spotify():
     code = request.data.decode("utf-8")
-    sp = create_auth()
+    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
+    sp = create_auth(cache_handler)
 
     session.clear()
-
     token_info = sp.get_access_token(code)
+    print()
+    # token_info = sp.get_cached_token()
+    print(token_info)
+    # spotipy.S
     session[TOKEN_INFO] = token_info
     session.modified = True
 
