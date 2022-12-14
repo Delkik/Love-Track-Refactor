@@ -4,23 +4,40 @@ import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import "../styles/match.css"
 import { Navigate } from "react-router-dom";
+import Chat from "../components/ChatBox";
+
 
 export default function Match(){
 	// const [data, setData] = useState();
 	const [pythonData, setPythonData] = useState();
     let data = useSelector(state => state.user.value)
+    const [userD, setD]  = useState(useSelector(state => state.user.value))
+    const [showChat, setShow] = useState(false)
+    const [matchedInfo, setInfo] = useState()
+
+    useEffect(() => {
+        console.log("this is the user data")
+        console.log(userD)
+    }, [])
+
+    const checkInfo = (chat) => {
+        console.log("i am being clicked")
+        setInfo(chat)
+        setShow(true)
+        console.log(matchedInfo)
+    }
 
     if (Object.keys(data).length === 0){
         return <Navigate to="/"/>
     }
 
     const users = [
-        {name:"Lana Rose", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
-        {name:"Andrew Tate", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
-        {name:"Monica Vernandez", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
-        {name:"Alia Suave", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
-        {name:"Shostam Barvav", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
-        {name:"Justin Williams", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"}
+        {name:"Lana Rose", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)", userId: 142},
+        {name:"Andrew Tate", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)",  userId: 143},
+        {name:"Monica Vernandez", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)",  userId: 144},
+        {name:"Alia Suave", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)",  userId: 145},
+        {name:"Shostam Barvav", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)",  userId: 146},
+        {name:"Justin Williams", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)",  userId: 147}
     ]
 
 	// useEffect(() =>{
@@ -37,21 +54,25 @@ export default function Match(){
     //         console.log(err)
     //     })
 	// }, [])
+    
 
     return (
         <div>
             <Navbar/>
             <div className='screenSettings'>
+            {!showChat ?
+            <div>
                 <div className='match-header'>
                     <h2>MATCHES</h2>
                 </div>
+                
                 <div className='chats'>
                     { users.length ?
                         users.map((chat, idx) => {
                         return (
                             <div key={idx} className='chat'>
                                 <table>
-                                    <tbody>
+                                    <tbody onClick={() => checkInfo(chat)}>
                                         <tr>
                                             <td rowSpan={2}> <img className="match-image" src={chat.picture} alt="hi"></img></td>
                                             <td className='name'>{chat.name}</td>
@@ -69,7 +90,8 @@ export default function Match(){
                             <p>Get started by matching with others!!</p>
                         </div> 
                     }
-                </div>
+                </div> </div>:
+                <div><Chat name = {"Imtiaz"} matchedName = {matchedInfo["name"]} theType = {"matches"} func = {setShow}/></div>}
             </div>
             <Navtab/>
         </div>

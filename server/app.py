@@ -63,7 +63,8 @@ def on_join(data):
 
 @socketio.on('leave')
 def on_leave(data):
-    room = data['room']
+    room = data
+    print("I left the room ya hurd: " + room)
     leave_room(room)
     
 @socketio.on("message")
@@ -80,7 +81,7 @@ def connected():
     print("client has connected")
     emit("connect",{"data":f"id: {request.sid} is connected"})
 
-def create_auth():
+def create_auth(cache_handler):
     return SpotifyOAuth(
         scope=scope,
         client_id=SPOTIFY_CLIENT_ID,
@@ -92,7 +93,9 @@ def create_auth():
 def current_user():
     # print(session,"CURRENT", TOKEN_INFO)
     print(session, "BEFORE")
-    token_info = session.get(TOKEN_INFO, None)
+    user_id = request.data.decode("utf-8")
+    print(user_id, "user idddd")
+    token_info = session.get(user_id, None)
     client = spotipy.client.Spotify(auth=token_info["access_token"])
     print(session, "AFTER")
     user = client.me()
@@ -223,14 +226,16 @@ def kmeans_train():
 @app.route("/refresh", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def refresh():
-
-    token_info = session.get(TOKEN_INFO, None)
+    user_id = request.data.decode("utf-8")
+    token_info = session.get(user_id, None)
+    client = spotipy.client.Spotify(auth=token_info["access_token"])
+    user = client.me()
     if not token_info:
         raise "No Session!"
     
     sp = create_auth()
     token_info = sp.refresh_access_token(token_info["refresh_token"])
-    session[TOKEN_INFO] = token_info
+    session[user_id] = token_info
 
     return json.dumps(
         {
@@ -245,17 +250,18 @@ def spotify():
     code = request.data.decode("utf-8")
     sp = create_auth()
 
-    session.clear()
-
     token_info = sp.get_access_token(code)
-    session[TOKEN_INFO] = token_info
+    client = spotipy.client.Spotify(auth=token_info["access_token"])
+    user = client.me()
+    session[user["id"]] = token_info
     session.modified = True
 
     return json.dumps(
         {
             "accessToken"   :   token_info["access_token"],
             "refreshToken"  :   token_info["refresh_token"],
-            "expiresIn"     :   token_info["expires_in"]
+            "expiresIn"     :   token_info["expires_in"],
+            "id":user["id"]
         })
 
 @app.route("/user", methods=['GET','POST'])

@@ -6,6 +6,7 @@ import { setTokens } from "../redux/tokens";
 export default function useAuth(code){
     const dispatch = useDispatch()
     let tokens = useSelector(state => state.tokens.value)
+    const [id, setId] = useState()
 
     var fetch_count = 0
     useEffect(() => {
@@ -18,6 +19,7 @@ export default function useAuth(code){
         .then(async res => {
             const data = await res.json()
             dispatch(setTokens({accessToken: data.accessToken, refreshToken: data.refreshToken, expiresIn: data.expiresIn}))
+            setId(data.id)
             // window.history.pushState({}, null, "/")
             
         })
@@ -34,7 +36,7 @@ export default function useAuth(code){
         const interval = setInterval(async () => {
             fetch("http://localhost:5000/refresh", {
                 method: 'POST',
-                body: tokens.refreshToken,
+                body: id,
                 credentials:"include"
             })
             .then(async res => {
@@ -53,5 +55,5 @@ export default function useAuth(code){
 
     }, [tokens.refreshToken, tokens.expiresIn])
 
-    return tokens.accessToken
+    return [tokens.accessToken, id]
 }

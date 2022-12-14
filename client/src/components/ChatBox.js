@@ -11,12 +11,12 @@ let endPoint = "http://127.0.0.1:5000"
 let socket = io.connect("http://127.0.0.1:5000")
 // {socket}
 
-function Chat({name}) {
+function Chat({name, matchedName, theType, func}) {
    const navigate = useNavigate()
     const {state} = useLocation();
     const data = state
     const [potUser, setPot] = useState(useSelector(state => state.potentials.value))
-    const [messages, setMessages] = useState([{ms:"Hello and Welcome", sender:"Imtiaz"}, {ms:"no stop talking", sender:"Justin"}, {ms:"don't tell me what to do", sender:"Imtiaz"}, {ms:"naurrr", sender:"Justin"}, {ms:"So when you wanna go out?", sender:"Imtiaz"}, {ms:"You way too gassed up boy", sender:"Justin"}])
+    const [messages, setMessages] = useState([{ms:"Hello and Welcome", sender:"Imtiaz"}, {ms:"no stop talking", sender:matchedName}, {ms:"don't tell me what to do", sender:"Imtiaz"}, {ms:"naurrr", sender:matchedName}, {ms:"So when you wanna go out?", sender:"Imtiaz"}, {ms:"You way too gassed up boy", sender:matchedName}])
     //const [messages, setMessages] = useState()
     const [message, setMessage] = useState("")
     const [joinedRoom, setJoined] = useState(false);
@@ -69,21 +69,26 @@ function Chat({name}) {
     }
 
     const onClickX = () =>{
-      fetch("http://localhost:5000/addChat", {
-            method:"POST",
-            credentials:"include",
-            body:JSON.stringify({"name":"Justin","history":messages}),
-            headers: {
-                'Content-Type':'application/json'
-            },
-          }).then(async res => {
-             const data = await res.json()
-              console.log(data)
-        }).catch(error=>{
-            console.log(error)
-          })
+      // fetch("http://localhost:5000/addChat", {
+      //       method:"POST",
+      //       credentials:"include",
+      //       body:JSON.stringify({"name":"Justin","history":messages}),
+      //       headers: {
+      //           'Content-Type':'application/json'
+      //       },
+      //     }).then(async res => {
+      //        const data = await res.json()
+      //         console.log(data)
+      //   }).catch(error=>{
+      //       console.log(error)
+      //     })
       socket.emit("leave", "1235")
-      navigate("/home",)
+      if(theType === "matches"){
+        console.log("I am in matches type these tings")
+       func(false)
+      }else{
+        navigate("/home",)
+      }
 
       //console.log(potUsers)
 
@@ -92,9 +97,11 @@ function Chat({name}) {
     return (
       <div>
         <img className = "xButton" onClick={() => onClickX()} src={xButton} alt="White Button"/>
-        <h1 className='nameTitle'>{potUser[0]["name"]}</h1>
+        {/* <h1 className='nameTitle'>{potUser[0]["name"]}</h1> */}
+        <h1 className='nameTitle'>{matchedName}</h1>
         <div className="chatBox">
-          {messages.map(msg => (msg.sender === potUser[0]["name"] ? <div className='left'><p className = "left2">{msg.sender} : {msg.ms}</p></div>: <div className='right'><p className = "right2">{msg.sender} : {msg.ms}</p></div>))}
+          {/* {messages.map(msg => (msg.sender === potUser[0]["name"] ? <div className='left'><p className = "left2">{msg.sender} : {msg.ms}</p></div>: <div className='right'><p className = "right2">{msg.sender} : {msg.ms}</p></div>))} */}
+          {messages.map(msg => (msg.sender === matchedName ? <div className='left'><p className = "left2">{msg.sender} : {msg.ms}</p></div>: <div className='right'><p className = "right2">{msg.sender} : {msg.ms}</p></div>))}
           </div>
           
           <div className='inputField'>
