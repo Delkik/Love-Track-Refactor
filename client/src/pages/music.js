@@ -1,23 +1,18 @@
 import React, { useState } from "react";
 import "../styles/music.css"
-import cover from "../images/neverRecover.jpg"
 import rightNext from "../images/rightNext.png"
 import Player from "../components/SongPlayer";
-import Navtab from "../components/Navtab";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import chatIcon from "../images/chatIcon.png"
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import io from "socket.io-client"
 import Chat from "../components/ChatBox";
-import xButton from "../images/whiteXButton.png"
 import { Navigate } from "react-router-dom";
 
 
 
-//  let socket = io.connect("http://127.0.0.1:5000")
 
 export default function Music(){
-    const dispatch = useDispatch()
     let tokens = useSelector(state => state.tokens.value)
     let user_data = useSelector(state => state.user.value)
     const navigate = useNavigate()
@@ -46,10 +41,7 @@ export default function Music(){
     const onClickX = () =>{
         setClicked(false)
         setLeftChat(true)
-        // dispatch(setChat(true))
         navigate("/home",)
-
-        //console.log(potUsers)
 
     }
 

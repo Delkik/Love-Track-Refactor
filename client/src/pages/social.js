@@ -1,12 +1,12 @@
-import Navtab from "../components/Navtab";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Post from "../components/Post";
-import { setPosts } from "../redux/posts";
-import { setLikes } from "../redux/likes";
-import Navbar from "../components/Navbar";
-import "../styles/social.css"
 import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Navbar from "../components/Navbar";
+import Navtab from "../components/Navtab";
+import Post from "../components/Post";
+import { setLikes } from "../redux/likes";
+import { setPosts } from "../redux/posts";
+import "../styles/social.css"
 
 export default function Social(){
 
@@ -14,7 +14,6 @@ export default function Social(){
     let user_data = useSelector(state => state.user.value)
     let likes = useSelector(state => state.likes.value)
     const dispatch = useDispatch()
-    // console.log(user_data)
 
     useEffect(() => {
         fetch("http://localhost:5000/posts", {
@@ -24,7 +23,6 @@ export default function Social(){
         .then(async res => {
             let data = await res.json()
             dispatch(setPosts(data))
-            console.log(data,"Got Posts")
         })
         .catch(err => {
             console.log(err)
@@ -36,9 +34,6 @@ export default function Social(){
     }
 
     const onlike = (like_data) => {
-        console.log(like_data)
-        // need post_id
-
         let liked_data = [...likes]
         let posts_data = [...posts]
         const post_index = posts_data.indexOf(like_data)
@@ -53,7 +48,6 @@ export default function Social(){
             posts_data[post_index] = {...posts_data[post_index],likes:posts_data[post_index]["likes"]+1}
 
         }
-        console.log(posts_data)
         dispatch(setPosts(posts_data))
         dispatch(setLikes(liked_data))
         fetch("http://localhost:5000/posts/"+like_data["post_id"]+"/like", {
@@ -64,22 +58,11 @@ export default function Social(){
         .then(async res => {
             const data = await res.json()
             dispatch(setPosts(data))
-            console.log(data)
         })
         .catch(err => {
             console.log(err)
         })
     }
-
-    // const pots = [
-    //     {profile_img:justin, lyric:"\"Sephiroth\"", song:"One-Winged Angel", likes: 10},
-    //     {profile_img:justin, lyric:"\"Sephiroth\"", song:"One-Winged Angel", likes: 2},
-    //     {profile_img:justin, lyric:"\"Sephiroth\"", song:"One-Winged Angel", likes: 34},
-    //     {profile_img:justin, lyric:"\"Sephiroth\"", song:"One-Winged Angel", likes: 324},
-    //     {profile_img:justin, lyric:"\"Sephiroth\"", song:"One-Winged Angel", likes: 789},
-    //     {profile_img:justin, lyric:"\"Sephiroth\"", song:"One-Winged Angel", likes: 130},
-    //     {profile_img:justin, lyric:"\"Sephiroth\"", song:"One-Winged Angel", likes: 165870},
-    // ]
 
     return (
         <div>

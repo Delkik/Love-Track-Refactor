@@ -1,13 +1,10 @@
-import Navtab from "../components/Navtab";
-import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
+import Navtab from "../components/Navtab";
 import "../styles/match.css"
-import { Navigate } from "react-router-dom";
 
 export default function Match(){
-	// const [data, setData] = useState();
-	const [pythonData, setPythonData] = useState();
     let data = useSelector(state => state.user.value)
 
     if (Object.keys(data).length === 0){
@@ -22,21 +19,6 @@ export default function Match(){
         {name:"Shostam Barvav", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"},
         {name:"Justin Williams", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)"}
     ]
-
-	// useEffect(() =>{
-	// 	fetch(process.env.REDIRECT+"api/kmeans", {
-    //         method: "POST",
-    //         body: JSON.stringify(terminalPayload, function(k, v) { return v === undefined ? "" : v; })
-    //     })
-    //     .then(async res => {
-    //         const data = await res.json();
-	// 		setPythonData(data)
-    //         console.log(data)
-    //     })
-    //     .catch(err => {
-    //         console.log(err)
-    //     })
-	// }, [])
 
     return (
         <div>

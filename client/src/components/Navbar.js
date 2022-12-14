@@ -1,6 +1,6 @@
+import { Link } from "react-router-dom";
 import love_track_logo from '../images/love_track_logo.png'
 import settings from "../images/settings_button.png"
-import { Link } from "react-router-dom";
 import "../styles/Navbar.css"
 
 export default function Navbar(){
