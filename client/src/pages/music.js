@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/music.css"
 import rightNext from "../images/rightNext.png"
 import Player from "../components/SongPlayer";
@@ -23,10 +23,6 @@ export default function Music(){
     const [potUsers, setPot] = useState(useSelector(state => state.potentials.value))
     const [userName, setUsername] = useState("")
 
-    if (Object.keys(user_data).length === 0){
-        return <Navigate to="/"/>
-    }
-
     const onClick = () => {
         setClicked(true)
         const socket = io("localhost:5000/", {
@@ -37,13 +33,21 @@ export default function Music(){
           });  
         setSocket(socket)
     }
-
+    useEffect(() => {
+        console.log("music page tracks")
+        console.log(tracks)
+    }, [])
     const onClickX = () =>{
         setClicked(false)
         setLeftChat(true)
         navigate("/home",)
 
     }
+
+    if (Object.keys(user_data).length === 0){
+        return <Navigate to="/"/>
+    }
+
 
     return(
         <div>
@@ -52,8 +56,8 @@ export default function Music(){
             <input type="text" placeholder='John...' onChange = {(event) => {setUsername(event.target.value)}}/>
             <h2 className="music-name">{potUsers[0]["name"]}</h2>
             <div className="music-albumCover">
-                <img src={tracks[0]['i']} alt="Album cover" className="music-cover"/>
-                <p>Song Name: {tracks[0]['n']}</p>
+                <img src={tracks[0]['image']} alt="Album cover" className="music-cover"/>
+                <p>Song Name: {tracks[0]['name']}</p>
             </div>
             {/* <Link to="/chat"> */}
             <img 
@@ -68,11 +72,11 @@ export default function Music(){
             :
             <div>
             {/* <Chat socket = {socketI}/> */}
-            <Chat name = {userName}/>
+            <Chat name = {userName} matchedName = "Justin"/>
             {/* <img className = "xButton" onClick={() => onClickX()} src={xButton} alt="White Button"/> */}
             </div>
             }
-            <Player accessToken={tokens.accessToken} trackUri={["spotify:track:6S3JlDAGk3uu3NtZbPnuhS"]}/>
+            <Player accessToken={tokens.accessToken} trackUri={[tracks[0]["uri"]]}/>
 
         </div>
     )

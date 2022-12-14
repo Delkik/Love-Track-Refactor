@@ -12,8 +12,9 @@ import { setPotential } from "../redux/potentialMatches";
 export default function Lyrics(){
     let user_data = useSelector(state => state.user.value)
     let posts = useSelector(state => state.posts.value)
-    const [lyrics, setLyrics] = useState({lyric:""})
+    const [lyrics, setLyrics] = useState({lyric:"", song: ""})
     const [users, setUsers] = useState()
+    const [hide, setHide] = useState(true)
     const [tracks, setTracks] = useState(useSelector(state => state.songs.value))
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -82,7 +83,16 @@ export default function Lyrics(){
 
     useEffect(() => {
         onChangeValue()
+        
     }, []);
+
+    useEffect(() => {
+        if(lyrics.lyric){
+            setHide(false)
+        }else{
+            setHide(true)
+        }
+    }, [lyrics.lyric]);
 
     if (Object.keys(user_data).length === 0){
         return <Navigate to="/"/>
@@ -91,10 +101,15 @@ export default function Lyrics(){
         <div>
             <h2 className="titleHub">Lyrics Hub!</h2>
             <p className="mainMess"> Here you can choose a one liner lyric which will display to other users of this app. They can heart your lyrics and vice versa as you will be able to scroll through their lyrics too</p>
+            <h5>Lyrics:</h5>
             <p className = "lyrics">{lyrics.lyric}</p>
+            <h5>Song Name:</h5>
+            <p className="lyrics">{lyrics.song}</p>
             <h4 className = "regenerate" onClick={onChangeValue}>Regenerate Lyrics</h4>
+            {!hide ? <div>
             <h4 className = "likeLyric" onClick={(event) => {onPost(event)}}>Show off the Lyric!</h4>
-            <h4 className = "nextPage" onClick={onStartMatching}>Start matching!!</h4>
+            <h4 className = "nextPage" onClick={onStartMatching}>Start matching!!</h4></div>:<div></div>
+            }
             <Navtab/>
         </div>
     )

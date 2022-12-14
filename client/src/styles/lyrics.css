@@ -8,13 +8,10 @@
 
 .lyrics{
     text-align: center;
-    background-color: white;
-    color: black;
-    padding: 6%;
+    color: white;
+    padding: 2%;
     font-weight: bold;
     margin-bottom: 15%;
-
-
 }
 
 .regenerate, .nextPage, .likeLyric{

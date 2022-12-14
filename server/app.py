@@ -68,7 +68,8 @@ def on_join(data):
 
 @socketio.on('leave')
 def on_leave(data):
-    room = data['room']
+    room = data
+    print("I left the room ya hurd: " + room)
     leave_room(room)
     
 @socketio.on("message")
@@ -227,13 +228,13 @@ def kmeans_train():
 @app.route("/refresh", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def refresh():
-
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
     auth_manager = create_auth(cache_handler)
 
     sp = spotipy.Spotify(auth_manager=auth_manager)
+
     token_info = sp.refresh_access_token(token_info["refresh_token"])
-    session[TOKEN_INFO] = token_info
+    session[user_id] = token_info
 
     return json.dumps(
         {
@@ -251,10 +252,7 @@ def spotify():
 
     session.clear()
     token_info = sp.get_access_token(code)
-    print()
-    # token_info = sp.get_cached_token()
-    print(token_info)
-    # spotipy.S
+
     session[TOKEN_INFO] = token_info
     session.modified = True
 
@@ -262,7 +260,8 @@ def spotify():
         {
             "accessToken"   :   token_info["access_token"],
             "refreshToken"  :   token_info["refresh_token"],
-            "expiresIn"     :   token_info["expires_in"]
+            "expiresIn"     :   token_info["expires_in"],
+            "id":user["id"]
         })
 
 @app.route("/user", methods=['GET','POST'])
