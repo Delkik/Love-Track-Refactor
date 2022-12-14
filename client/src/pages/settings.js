@@ -1,17 +1,17 @@
-import Navtab from "../components/Navtab";
-import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
-import '../styles/settings.css'
-import location from '../images/location_logo.png'
-import name from '../images/name_logo.png'
-import gender from '../images/gender_logo.png'
-import bio from '../images/bio_logo.png'
-import love_track_logo from '../images/love_track_logo.png'
-import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
-import RangeSlider from 'react-bootstrap-range-slider';
-import { setUser } from "../redux/user";
-import { useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import RangeSlider from 'react-bootstrap-range-slider';
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
+import bio from '../images/bio_logo.png'
+import gender from '../images/gender_logo.png'
+import location from '../images/location_logo.png'
+import love_track_logo from '../images/love_track_logo.png'
+import name from '../images/name_logo.png'
+import Navtab from "../components/Navtab";
+import { setUser } from "../redux/user";
+import '../styles/settings.css'
 
 export default function Settings(){
 
@@ -33,7 +33,6 @@ export default function Settings(){
     let [lookingFor, setLooking] = useState()
   
     useEffect(()=>{
-      console.log(data)
       if (Object.keys(data).length === 0){
         return <Navigate to="/"/>
       }
@@ -50,11 +49,6 @@ export default function Settings(){
       setType(data.user.relationshipType)
       setLooking(data.user.lookingFor)
     },[])
-
-    const onChangeValue = (e, func) => {
-      func(e.target.value)
-      console.log(e.target.value)
-    }
 
     const onSave = (e) => {
 
@@ -86,15 +80,12 @@ export default function Settings(){
       })
       .then(async res => {
         const data = await res.json()
-        console.log(data)
         navigate("/home")
         alert("Saved!")
-            // window.history.pushState({}, null, "/")
             
       })
       .catch(err => {
           console.log(err)
-          // window.location = '/'
       })
     }
 
@@ -196,7 +187,6 @@ export default function Settings(){
             </div>
             <RangeSlider
                 value={data.user.locationRange}
-                // defaultValue={data.user.locationRange}
                 onChange={changeEvent => setValue(changeEvent.target.value)}
               />
 

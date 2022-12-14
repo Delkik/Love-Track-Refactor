@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "../styles/newUser.css"
 import love_track_logo from "../images/love_track_logo.png"
 import "../styles/newUser.css"
 
@@ -24,7 +23,6 @@ export default function NewUser1({childToParent}) {
     }
 
     const OnChangeHandler = (event,func) => {
-      // console.log(event.target.value)
       func(event.target.value)
     }
 

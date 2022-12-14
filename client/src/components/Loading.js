@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import "../styles/loading.css"
 import love_track_logo from "../images/love_track_logo.png"
+import "../styles/loading.css"
 
 
 function Loading({action}) {

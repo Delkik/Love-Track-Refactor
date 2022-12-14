@@ -1,15 +1,10 @@
-import Navtab from "../components/Navtab";
-import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
+import Navtab from "../components/Navtab";
 import "../styles/match.css"
-import { Navigate } from "react-router-dom";
-import Chat from "../components/ChatBox";
-
 
 export default function Match(){
-	// const [data, setData] = useState();
-	const [pythonData, setPythonData] = useState();
     let data = useSelector(state => state.user.value)
     const [userD, setD]  = useState(useSelector(state => state.user.value))
     const [showChat, setShow] = useState(false)
@@ -39,23 +34,6 @@ export default function Match(){
         {name:"Shostam Barvav", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)",  userId: 146},
         {name:"Justin Williams", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)",  userId: 147}
     ]
-
-	// useEffect(() =>{
-	// 	fetch(process.env.REDIRECT+"api/kmeans", {
-    //         method: "POST",
-    //         body: JSON.stringify(terminalPayload, function(k, v) { return v === undefined ? "" : v; })
-    //     })
-    //     .then(async res => {
-    //         const data = await res.json();
-	// 		setPythonData(data)
-    //         console.log(data)
-    //     })
-    //     .catch(err => {
-    //         console.log(err)
-    //     })
-	// }, [])
-    
-
     return (
         <div>
             <Navbar/>

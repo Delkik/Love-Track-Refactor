@@ -1,43 +1,28 @@
 import { useState } from "react";
-import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import RangeSlider from 'react-bootstrap-range-slider';
+import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import love_track_logo from "../images/love_track_logo.png"
 import "../styles/newUser.css"
 
 export default function NewUser3({childToParent}){
-    const [occupation, setOccupation] = useState();
-    const [job, setJob] = useState();
-    const [school, setSchool] = useState();
-    const [description, setDescription] = useState();
-    const [favoriteColor, setFavoriteColor] = useState();
-    const [location, setLocation] = useState();
+    const [occupation, setOccupation] = useState("");
+    const [job, setJob] = useState("");
+    const [school, setSchool] = useState("");
+    const [description, setDescription] = useState("");
+    const [favoriteColor, setFavoriteColor] = useState("");
+    const [location, setLocation] = useState("");
     const [locationRange, setLocationRange] = useState(0);
-    const [ageRange, setAgeRange] = useState();
+    const [ageRange, setAgeRange] = useState("");
     const [image, setImage] = useState();
 
 
-    const completed = () => {
-        // if (!occupation || !school || !description || !favoriteColor || !location || !locationRange || !ageRange){
-        //   alert("Please fill in each box!")
-        //   return false;
-        // }
-        return true;
-
-    }
-
-    function handleChange(event) {
-      setImage(event.target.files[0])
-    }
-
     const fileHandler = (event) => {
-      console.log(event.target.files[0])
       let formData = new FormData();
       formData.append("file",event.target.files[0])
       formData.append('fileName', event.target.files[0].name);
       if (event.target.files[0].type.slice(0,5) !== "image"){
           return alert("File must be an image!")
       }
-      console.log("wefuh")
       fetch("http://localhost:5000/upload", {
           method: 'POST',
           body: formData,
@@ -49,7 +34,6 @@ export default function NewUser3({childToParent}){
               return alert("Invalid File!")
           }
           setImage(data["link"])
-          console.log(data)
               
       })
       .catch(err => {
@@ -57,17 +41,6 @@ export default function NewUser3({childToParent}){
       })
   }
 
-    const position = async () => {
-      await navigator.geolocation.getCurrentPosition(
-        position => { 
-          console.log( {latitude: position.coords.latitude, 
-          longitude: position.coords.longitude})
-        }, 
-        err => console.log(err)
-      );
-    }
-    // position()
-    
     const OnChangeHandler = (event,func) => {
       func(event.target.value)
     }
@@ -100,14 +73,9 @@ export default function NewUser3({childToParent}){
               <label onChange={(event) => {OnChangeHandler(event, setFavoriteColor)}}>Favorite Color<br />
               <input type="text" name="color" />
               </label> <br />
-              <label onChange={(event) => {OnChangeHandler(event, setLocation)}}>Location<br />
-              <input type="text" name="location" />
-              <input type='button' name="locationBtn" value='find' />
-              </label> <br />
               <label onChange={(event) => {OnChangeHandler(event, setLocationRange)}}>Location Range<br />
               <RangeSlider
                 value={locationRange}
-                // defaultValue={data.user.locationRange}
                 onChange={changeEvent => {setLocationRange(changeEvent.target.value)}}
               />
               </label> <br />
@@ -118,14 +86,11 @@ export default function NewUser3({childToParent}){
           </div>
         </div>
     <button className="next-button" onClick={() => {
-      if (completed()){
         childToParent({},-1)
-      }
-    }}>
+      }}>
         Previous 
     </button>
     <button className="next-button" onClick={() => {
-        if (completed()){
           childToParent(
             {
                 occupation: occupation,
@@ -139,7 +104,6 @@ export default function NewUser3({childToParent}){
                 profile_img:image
             },1
             )
-        }
       }}>
           Finish
       </button>

@@ -1,11 +1,11 @@
-import Navtab from "../components/Navtab";
-import { useDispatch, useSelector } from "react-redux";
-import "../styles/profile.css"
-import { useState } from "react";
-import { setUser } from "../redux/user";
-import Navbar from "../components/Navbar";
-import love_track_logo from "../images/love_track_logo.png"
 import { Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import Navbar from "../components/Navbar";
+import Navtab from "../components/Navtab";
+import { setUser } from "../redux/user";
+import "../styles/profile.css"
+
 var parse = require('html-react-parser');
 
 export default function Profile(){
@@ -18,8 +18,6 @@ export default function Profile(){
         return <Navigate to="/"/>
     }
 
-
-	console.log(user)
 
     const interests = [
         "Gaming",
@@ -39,14 +37,12 @@ export default function Profile(){
     }
 
     const fileHandler = (e) => {
-        console.log(image)
         let formData = new FormData();
         formData.append("file",image)
         formData.append('fileName', image.name);
         if (image.type.slice(0,5) !== "image"){
             return alert("File must be an image!")
         }
-        console.log("wefuh")
         fetch("http://localhost:5000/upload", {
             method: 'POST',
             body: formData,
@@ -59,7 +55,6 @@ export default function Profile(){
             }
 
             let d = {...user.user,profile_img:data["link"]}
-            // console.log(d)
             dispatch(setUser({user:d}))
             fetch("http://localhost:5000/update_user", {
                 method: 'PUT',
@@ -80,13 +75,13 @@ export default function Profile(){
 
                 <div className="profile-main">
                     <div className="PLEASE">
-                        <img src={user.user.profile_img} className='profile-pic'/>
+                        <img src={user.user.profile_img ? user.user.profile_img : "https://i.imgur.com/V4RclNb.png"} className='profile-pic'/>
                         <input type='file' id='input-file' accept="image/*" name='Image Uploader' onChange={handleChange}/>
                         <button type="submit" onClick={fileHandler}>Upload</button>
                     </div>
                     <div className="pain">
                         <div className='pro'>
-                            {user.user.name}, {user.user.age}
+                            {user.user.name ? user.user.name : "Unknown"}, {user.user.age ? user.user.age : ">17"}
                         </div>
                         <div className="profile-title">
                             {
