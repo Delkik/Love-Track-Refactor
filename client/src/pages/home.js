@@ -1,21 +1,19 @@
-import Navtab from "../components/Navtab";
 import { Link, Navigate } from "react-router-dom";
-import "../styles/HomePage.css"
-import settings from "../images/settings_button.png"
-import match from "../images/matching_button.png"
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom"
 import love_track_logo from '../images/love_track_logo.png'
-import { useEffect } from "react";
+import match from "../images/matching_button.png"
+import Navtab from "../components/Navtab";
 import { setSongs } from "../redux/songs";
+import settings from "../images/settings_button.png"
+import "../styles/HomePage.css"
 
 export default function HomePage(){
     const user = useSelector(state => state.user.value)
     const navigate = useNavigate();
     const dispatch = useDispatch()
-    const tokens = useSelector(state => state.tokens.value)
-    // console.log(user, tokens)
-    console.log(tokens)
+    
     useEffect(() => {
       fetch("http://localhost:5000/user_tracks", {
             method: "GET",
@@ -23,7 +21,6 @@ export default function HomePage(){
         }).then(async res => {
             const data = await res.json()
             dispatch(setSongs(data))
-            // console.log(tracks)
         }).catch(error=>{
             console.log(error)
           })

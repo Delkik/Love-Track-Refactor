@@ -5,22 +5,24 @@ import pandas as pd
 import requests
 import random
 import spotipy
+import time
 import uuid
-from lyric_generator import *
+
 
 from copy import deepcopy
-
 from bson.json_util import dumps
-from datetime import time
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, session, request
 from flask_cors import CORS, cross_origin
+from flask_session import Session
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from match import kmeans, create_genre_list, debug_create_genre_list, debug_kmeans
+from lyric_generator import *
+from match import *
 from pymongo import MongoClient
 from spotipy.oauth2 import SpotifyOAuth
 
 TEST_USERS = pd.read_csv("test_users.csv")
+DEBUG = True
 
 load_dotenv()
 scope = "streaming user-read-private user-read-email user-library-read user-library-modify user-read-playback-state user-modify-playback-state"
@@ -42,23 +44,26 @@ mongo_uri2 = f"mongodb+srv://{NEW_USER}:{PASS}@sandbox.679hr.mongodb.net/?authMe
 
 base_url = "https://api.musixmatch.com/ws/1.1/"
 api_key = "&apikey=b47d930cf4a671795d7ab8b83fd74471"
-app = Flask(__name__)
 #CORS(app)
-CORS(app, resources={r"/*":{"origins":"*"}})
 
 DB_CLIENT = MongoClient(mongo_uri)
 
+app = Flask(__name__)
 
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config["SESSION_COOKIE_NAME"] = "Spotify Cookie"
 app.config["SESSION_COOKIE_HTTPONLY"] = False
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = './.flask_session/'
 socketio = SocketIO(app,cors_allowed_origins="*")
 TOKEN_INFO = "code"
+CORS(app, resources={r"/*":{"origins":"*"}})
+Session(app)
 
 @socketio.on('join')
 def on_join(data):
     room = data
-    print("room: " + room)
+    # print("room: " + room)
     join_room(room)
 
 @socketio.on('leave')
@@ -68,44 +73,45 @@ def on_leave(data):
     
 @socketio.on("message")
 def handle_message(message):
-    print("Received message: " + message['ms'])
-    print("I have been triggered")
+    # print("Received message: " + message['ms'])
+    # print("I have been triggered")
     emit('my_response', message, broadcast=True)
     return None
 
 @socketio.on("connect")
 def connected():
     """event listener when client connects to the server"""
-    print(request.sid)
+    # print(request.sid)
     print("client has connected")
     emit("connect",{"data":f"id: {request.sid} is connected"})
 
-def create_auth():
+def create_auth(cache_handler):
     return SpotifyOAuth(
         scope=scope,
         client_id=SPOTIFY_CLIENT_ID,
         client_secret=SPOTIFY_CLIENT_SECRET,
-        redirect_uri=REDIRECT)
+        redirect_uri=REDIRECT,
+        cache_handler=cache_handler
+        )
 
 @app.route("/current_user", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def current_user():
-    # print(session,"CURRENT", TOKEN_INFO)
-    print(session, "BEFORE")
-    token_info = session.get(TOKEN_INFO, None)
-    client = spotipy.client.Spotify(auth=token_info["access_token"])
-    print(session, "AFTER")
-    user = client.me()
-    return json.dumps({"user":user})
+    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
+    auth_manager = create_auth(cache_handler)
+
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    return json.dumps({"user":spotify.current_user()})
 
 @app.route("/user_tracks", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def get_tracks():
-    print("i am working")
     sp = None
     try:
-        token_info = session.get(TOKEN_INFO, None)
-        sp = spotipy.Spotify(auth = token_info['access_token'])
+        cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
+        auth_manager = create_auth(cache_handler)
+
+        sp = spotipy.Spotify(auth_manager=auth_manager)
     except:
         return {"msg":"no valid logged in user"}
     l = []
@@ -136,9 +142,7 @@ def getLyrics():
             index = random.randint(0,len(bdy)-1)
             song = bdy[index]
             bdy.pop(index)
-            print("hi", song)
             lyric = lyrics(song['name'], song['artist'])
-            print(lyric)
             return jsonify(lyric)
         except:
             count-=1
@@ -176,21 +180,9 @@ def match():
     user_data.pop('_id', None)
 
     db = DB_CLIENT["main"]
-    bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]}},{"genres":1,"_id":0,"spotify_id":1}).limit(1000)
-    users = [i for i in bruh]
-
-    # REMOVE ALL THE UNNECCESSARY DATA FIRST
-    users.append(user_data)
-
-    cluster = int(kmeans(users,TEST_USERS)["cluster"])
-    user_data["cluster"] = cluster
-
-    users = dumps(db.accounts.find({"cluster":cluster}).limit(100))
-    user = eval(users)
-    db.accounts.replace_one({"spotify_id":user_data["spotify_id"]},user_data)
-    if user == []:
-        return json.dumps({"kmeans":{}})
-    return json.dumps({"kmeans":cluster})
+    bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]},"cluster":user_data["cluster"]},{"_id":0}).limit(1000)
+    # print(list(bruh))
+    return {"users":list(bruh)}
 
 @app.route("/get_all_users", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -199,7 +191,6 @@ def allUser():
     db = client["main"]
     users = db.accounts.find({})
     peeps = []
-    print("getting all users!")
     for d in users:
         peeps.append(d)
     return dumps({"allUsers":peeps})
@@ -208,27 +199,39 @@ def allUser():
 @app.route("/kmeans", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def kmeans_train():
+    now = time.time()
     user_data = request.data.decode("utf-8")
     user_data = json.loads(user_data)
     user_data.pop('_id', None)
 
     db = DB_CLIENT["main"]
 
-    # d = deepcopy(user_data)
+    data = None
+    if DEBUG:
+        data = debug_create_genre_list(TEST_USERS)
+    else:
+        data = create_genre_list()
+    data = data[list(data.keys())[0]]
+    data["spotify_id"] = user_data["spotify_id"]
 
-    # CREATE THE GENRE LIST AND THATS IT
+    cluster = kmeans(data, TEST_USERS)
+    if DEBUG:
+        cluster = 0
+    user_data["cluster"] = cluster
 
-    return json.dumps({"kmeans":{}})
+    db.accounts.replace_one({"spotify_id":user_data["spotify_id"]},user_data)
+
+    print(time.time() - now, "END OF ENDPOINT")
+    return json.dumps({"kmeans":cluster})
 
 @app.route("/refresh", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def refresh():
 
-    token_info = session.get(TOKEN_INFO, None)
-    if not token_info:
-        raise "No Session!"
-    
-    sp = create_auth()
+    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
+    auth_manager = create_auth(cache_handler)
+
+    sp = spotipy.Spotify(auth_manager=auth_manager)
     token_info = sp.refresh_access_token(token_info["refresh_token"])
     session[TOKEN_INFO] = token_info
 
@@ -243,11 +246,15 @@ def refresh():
 @cross_origin(supports_credentials=True)
 def spotify():
     code = request.data.decode("utf-8")
-    sp = create_auth()
+    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
+    sp = create_auth(cache_handler)
 
     session.clear()
-
     token_info = sp.get_access_token(code)
+    print()
+    # token_info = sp.get_cached_token()
+    print(token_info)
+    # spotipy.S
     session[TOKEN_INFO] = token_info
     session.modified = True
 
@@ -293,7 +300,6 @@ def posts():
         return dumps(posts.find().limit(30))
     else:
         post_data = request.data.decode("utf-8")
-        print(post_data)
         post_data = json.loads(post_data)
         posts.insert_one(post_data)
         return {}
@@ -319,12 +325,10 @@ def like(id):
 @cross_origin(supports_credentials=True)
 def postChat():
     bdy = request.get_json()
-    print(bdy)
     client = MongoClient(mongo_uri2)
     db = client["chatHistory"]
     try:
         db.chats.insert_one({bdy["name"]:bdy["history"]})
-        print("I added to db \n\n\n")
         return dumps({"message":"succeeded in updating db"})
     except:
         return dumps({"message":"error with updating to db. please try again"})

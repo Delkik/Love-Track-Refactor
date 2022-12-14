@@ -87,7 +87,6 @@ export default function Lyrics(){
     if (Object.keys(user_data).length === 0){
         return <Navigate to="/"/>
     }
-    console.log(lyrics)
     return(
         <div>
             <h2 className="titleHub">Lyrics Hub!</h2>

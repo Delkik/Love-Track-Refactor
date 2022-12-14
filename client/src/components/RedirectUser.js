@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
-import useAuth from "./useAuth"
-import NewUser from "./NewUser";
-import { Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../redux/user";
+import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
+import ErrorPage from "./ErrorPage";
 import Loading from "./Loading";
+import NewUser from "./NewUser";
+import { setUser } from "../redux/user";
+import useAuth from "./useAuth"
 
 export default function RedirectUser({code}) {
     const [userId, setUserId] = useState();
     const [userType, setUserType] = useState();
     const [userExists, setUserExists] = useState();
-    // const [userData, setUserData] = useState();
+    const [spotifyUserExists, setSpotifyUserExists] = useState(true);
+    
     let userData = useSelector(state => state.user.value)
+
     const accessToken = useAuth(code);
     const dispatch = useDispatch();
 
@@ -19,7 +22,11 @@ export default function RedirectUser({code}) {
     const [kretry, setKRetry] = useState(2)
 
     useEffect(() => {
-        if (!accessToken || retry === 0) return
+        if (!accessToken) return
+        if (retry === 0) {
+            setSpotifyUserExists(false)
+            return
+        }
         fetch("http://localhost:5000/current_user", {
             method: "GET",
             credentials:"include"
@@ -31,7 +38,6 @@ export default function RedirectUser({code}) {
         })
         .catch(err => {
             setRetry(retry-1)
-            // window.location = '/'
         })
     }, [accessToken, retry])
 
@@ -47,6 +53,7 @@ export default function RedirectUser({code}) {
         .then(async res => {
             const data = await res.json();
             dispatch(setUser(data))
+            userData = data
             setUserExists(data.user!==undefined)
         })
         .catch(err => {
@@ -55,8 +62,7 @@ export default function RedirectUser({code}) {
     }, [accessToken, userId])
 
     useEffect(() => {
-        if (userType !== "premium"  || kretry === 0){return}
-        console.log(userData)
+        if (userType !== "premium"  || kretry === 0 || !userData.user){return}
         fetch("http://localhost:5000/kmeans", {
             method: "POST",
             body: JSON.stringify(userData.user),
@@ -64,25 +70,25 @@ export default function RedirectUser({code}) {
         })
         .then(async res => {
             const data = await res.json();
-            // dispatch(setUser(data))
-            // setUserExists(data.user!==undefined)
-            console.log(data)
+            let d = {...userData.user, cluster:data["kmeans"]}
+            dispatch(setUser({user:d}))
         })
         .catch(err => {
             console.log(err)
-            // console.log(retry)
-            console.log(userData)
             setKRetry(kretry-1)
         })
-    }, [userType, kretry])
+    }, [userType, kretry, userData])
 
-    // Render loading screen or something
+    if (spotifyUserExists===false){
+        return <ErrorPage status={404} action={"No Spotify user found!"}/>
+    }
+
     if (userExists===undefined){
         return <Loading action={"Gathering data on User"} />
     }
 
     // if (userType !== "premium"){
-    //     return <div>BRUH</div>
+    //     return <ErrorPage status={400} action={"Come back when you have premium!"}/>
     // }
 
     if (userData.user){

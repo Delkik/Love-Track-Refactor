@@ -10,15 +10,6 @@ var cN = "ting"
 var count = 1
 export default function NewUser2({childToParent}){
     const [interests, setInterests] = useState([]);
-    
-    const completed = () => {
-        if (false){
-          alert("Please fill in each box!")
-          return false;
-        }
-        return true;
-
-    }
 
     const [listInterests, setInterest] = useState([])
     const [clickedAlrdy, setClicked] = useState([])
@@ -62,20 +53,16 @@ export default function NewUser2({childToParent}){
             </ul>
 
             <button className="next-button" onClick={() => {
-                if (completed()){
                 childToParent({},-1)
-                }
             }}>
                 Previous
             </button>
           <button className="next-button" onClick={() => {
-                if (completed()){
                 childToParent(
                     {
                         test:2
                     },1
                     )
-                }
             }}>
                 N E X T
             </button>

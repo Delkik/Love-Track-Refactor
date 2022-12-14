@@ -1,17 +1,17 @@
-import '../App.css';
 import {
   HashRouter as Router,
   Route,
   Routes
 } from "react-router-dom";
-import Main from './main';
 import HomePage from './home';
+import Lyrics from './lyrics';
+import Main from './main';
 import Match from './match';
-import Social from './social';
+import Music from './music';
 import Profile from './profile';
 import Settings from './settings';
-import Music from './music';
-import Lyrics from './lyrics';
+import Social from './social';
+import '../App.css';
 
 function App() {
 
