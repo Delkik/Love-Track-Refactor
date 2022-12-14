@@ -6,7 +6,6 @@ import { setTokens } from "../redux/tokens";
 export default function useAuth(code){
     const dispatch = useDispatch()
     let tokens = useSelector(state => state.tokens.value)
-    const [id, setId] = useState()
 
     useEffect(() => {
         fetch("http://localhost:5000/spotify", {
@@ -16,7 +15,8 @@ export default function useAuth(code){
         })
         .then(async res => {
             const data = await res.json()
-            dispatch(setTokens({accessToken: data.accessToken, refreshToken: data.refreshToken, expiresIn: data.expiresIn}))           
+            dispatch(setTokens({accessToken: data.accessToken, refreshToken: data.refreshToken, expiresIn: data.expiresIn}))
+            
         })
         .catch(err => {
             console.log(err)
@@ -28,8 +28,7 @@ export default function useAuth(code){
         
         const interval = setInterval(async () => {
             fetch("http://localhost:5000/refresh", {
-                method: 'POST',
-                body: id,
+                method: 'GET',
                 credentials:"include"
             })
             .then(async res => {
@@ -46,5 +45,5 @@ export default function useAuth(code){
 
     }, [tokens.refreshToken, tokens.expiresIn])
 
-    return [tokens.accessToken, id]
+    return tokens.accessToken
 }

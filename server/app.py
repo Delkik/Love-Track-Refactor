@@ -101,8 +101,8 @@ def current_user():
     cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
     auth_manager = create_auth(cache_handler)
 
-    spotify = spotipy.Spotify(auth_manager=auth_manager)
-    return json.dumps({"user":spotify.current_user()})
+    sp = spotipy.Spotify(auth_manager=auth_manager)
+    return json.dumps({"user":sp.current_user()})
 
 @app.route("/user_tracks", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -234,7 +234,6 @@ def refresh():
     sp = spotipy.Spotify(auth_manager=auth_manager)
 
     token_info = sp.refresh_access_token(token_info["refresh_token"])
-    session[user_id] = token_info
 
     return json.dumps(
         {
@@ -260,8 +259,7 @@ def spotify():
         {
             "accessToken"   :   token_info["access_token"],
             "refreshToken"  :   token_info["refresh_token"],
-            "expiresIn"     :   token_info["expires_in"],
-            "id":user["id"]
+            "expiresIn"     :   token_info["expires_in"]
         })
 
 @app.route("/user", methods=['GET','POST'])
