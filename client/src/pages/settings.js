@@ -65,7 +65,8 @@ export default function Settings(){
         relationshipType:type,
         orientation:orientation,
         lookingFor:lookingFor,
-        school:school
+        school:school,
+        isActive:false
       }
 
       if (!newName || !age || !orientation || !type || !newGender || !lookingFor){

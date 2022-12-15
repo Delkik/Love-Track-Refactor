@@ -183,6 +183,12 @@ def match():
     db = DB_CLIENT["main"]
     bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]},"cluster":user_data["cluster"]},{"_id":0}).limit(1000)
     # print(list(bruh))
+    count = 0
+    for i in bruh:
+        if i["isActive"] == False:
+            bruh.pop(count)
+        count= count+1
+
     return {"users":list(bruh)}
 
 @app.route("/get_all_users", methods=['GET','POST'])

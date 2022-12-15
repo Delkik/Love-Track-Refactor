@@ -4,7 +4,8 @@ import io from "socket.io-client"
 import "../styles/chat.css"
 import Navtab from "../components/Navtab";
 import xButton from "../images/whiteXButton.png"
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../redux/user";
 
 
 let endPoint = "http://127.0.0.1:5000"
@@ -12,7 +13,8 @@ let socket = io.connect("http://127.0.0.1:5000")
 // {socket}
 
 function Chat({name, matchedName, ownerId, matchedId, theType, func}) {
-   const navigate = useNavigate()
+    const navigate = useNavigate()
+    let user_data = useSelector(state => state.user.value)
     const {state} = useLocation();
     const data = state
     const [potUser, setPot] = useState(useSelector(state => state.potentials.value))
@@ -20,6 +22,8 @@ function Chat({name, matchedName, ownerId, matchedId, theType, func}) {
     //const [messages, setMessages] = useState()
     const [message, setMessage] = useState("")
     const [joinedRoom, setJoined] = useState(false);
+    const dispatch = useDispatch()
+
 
     useEffect(() => {
       const socket = io("localhost:5000/", {
@@ -69,6 +73,23 @@ function Chat({name, matchedName, ownerId, matchedId, theType, func}) {
     }
 
     const onClickX = () =>{
+      let newData = {
+        ...user_data.user,
+        isActive:false
+      }
+      dispatch(setUser({user: newData}))
+      fetch("http://localhost:5000/update_user", {
+          method: 'PUT',
+          body: JSON.stringify(newData),
+          mode: 'cors',
+      })
+      .then(async res => {
+          const data = await res.json()
+      })
+      .catch(err => {
+          console.log(err)
+      })
+
       fetch("http://localhost:5000/addChat", {
             method:"POST",
             credentials:"include",

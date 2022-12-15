@@ -7,6 +7,7 @@ import Navtab from "../components/Navtab";
 import { Navigate } from "react-router-dom";
 import { setPosts } from "../redux/posts";
 import { setPotential } from "../redux/potentialMatches";
+import { setUser } from "../redux/user";
 import ClimbingBoxLoader from "react-spinners/HashLoader"
 import LoadingMatches from "../components/LoadingForMatch";
 
@@ -16,7 +17,7 @@ export default function Lyrics(){
     let posts = useSelector(state => state.posts.value)
     const [lyrics, setLyrics] = useState({lyric:"", song: ""})
     const [matchLoad, setLoader] = useState(false)
-    // const [hide, setHide] = useState(true)
+    const [currentUser, setcurrentUser] = useState(useSelector(state => state.user.value))
     const [regColor, setregColor] = useState("blue")
     const [postColor, setpostColor] = useState("red")
     const [matchColor, setmatchColor] = useState("green")
@@ -82,6 +83,25 @@ export default function Lyrics(){
         }).catch(error=>{
             console.log(error)
         })
+
+        let newData = {
+            ...user_data.user,
+            isActive:true
+        }
+        dispatch(setUser({user: newData}))
+        fetch("http://localhost:5000/update_user", {
+            method: 'PUT',
+            body: JSON.stringify(newData),
+            mode: 'cors',
+        })
+        .then(async res => {
+            const data = await res.json()
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        console.log("is active update")
+        console.log(user_data)
         //navigate("/music")
     }
 
