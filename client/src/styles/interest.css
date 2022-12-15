@@ -2,7 +2,44 @@
     font-family: 'momcake';
     font-weight: bold;
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     display: inline-block;
     margin: 10px;
+}
+
+.ting1{
+    color: aliceblue;
+    position: absolute;
+    margin-left: -40%;
+    margin-top: 5%;
+}
+
+.ting12{
+    color:white;
+    position: absolute;
+    margin-left: 40%;
+    margin-top: 5%;
+}
+
+
+.ting123{
+    color:white;
+    position: absolute;
+    margin-left: 0%;
+    margin-top: 13%;
+}
+
+
+.ting1234{
+    color:white;
+    position: absolute;
+    margin-left: 38%;
+    margin-top: 20%;
+}
+
+.ting12345{
+    color:white;
+    position: absolute;
+    margin-left:4%;
+    margin-top: 35%;
 }

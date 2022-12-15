@@ -6,7 +6,7 @@
     justify-content: center;
     float: left;
     margin-top: 6%;
-    padding: 15%;
+    padding: 10%;
 }
 
 .newDescription{
@@ -16,12 +16,24 @@
 
 .next-button{
     background-color:#B91E1E;
-    border: 2px;
     font-weight: bold;
+    position:absolute;
     font-size: 1rem;
+    padding: 2%;
+    margin-top:100%;
+    margin-left: 50%;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    padding: 8px 40px 8px 40px;
-    margin-right: 2px;
+}
+.previous-button{
+    background-color:#B91E1E;
+    font-weight: bold;
+    position:absolute;
+    width: 40%;
+    font-size: 1rem;
+    padding: 2%;
+    margin-top:100%;
+    margin-right: 60%;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .setGreen{

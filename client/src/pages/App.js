@@ -11,6 +11,7 @@ import Music from './music';
 import Profile from './profile';
 import Settings from './settings';
 import Social from './social';
+import NewUser2 from '../components/NewUser2'
 import '../App.css';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="/settings" element={<Settings/>} />
             <Route path="/music" element={<Music/>} />
             <Route path="/lyrics" element = {<Lyrics/>}/>
+            <Route path="/interests" element = {<NewUser2/>}/>
           </Routes>
       </Router>
     </div>

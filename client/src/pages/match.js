@@ -1,7 +1,9 @@
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import {useEffect, useState} from 'react'
 import Navbar from "../components/Navbar";
 import Navtab from "../components/Navtab";
+import Chat from "../components/ChatBox"
 import "../styles/match.css"
 
 export default function Match(){
