@@ -1,9 +1,13 @@
 from bs4 import BeautifulSoup
 import requests
 import random
+import re
 
 def lyrics(songName, songArtist):
-    url = f"https://genius.com/{songArtist}-{songName}-lyrics"
+    regex = re.compile('[^a-zA-Z\s]')
+    newSongName = regex.sub('', songName)
+    newSongArtist = regex.sub('', songArtist)
+    url = f"https://genius.com/{newSongArtist}-{newSongName}-lyrics"
     print(url)
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
