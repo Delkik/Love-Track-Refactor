@@ -42,3 +42,16 @@
     margin-right: auto;
     margin-left: auto;
 }
+
+.like{
+    display: block;
+    margin-top:11%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.songName{
+    text-align: center;
+    font-family: 'momcake';
+    font-size: 150%;
+}

@@ -12,6 +12,8 @@
     padding: 2%;
     font-weight: bold;
     margin-bottom: 15%;
+    font-family: 'momcake';
+    font-size:140%;
 }
 
 .regenerate, .nextPage, .likeLyric{
