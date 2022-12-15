@@ -7,20 +7,26 @@ import Navtab from "../components/Navtab";
 import { Navigate } from "react-router-dom";
 import { setPosts } from "../redux/posts";
 import { setPotential } from "../redux/potentialMatches";
+import ClimbingBoxLoader from "react-spinners/HashLoader"
+import LoadingMatches from "../components/LoadingForMatch";
 
 
 export default function Lyrics(){
     let user_data = useSelector(state => state.user.value)
     let posts = useSelector(state => state.posts.value)
     const [lyrics, setLyrics] = useState({lyric:"", song: ""})
-    const [users, setUsers] = useState()
-    const [hide, setHide] = useState(true)
+    const [matchLoad, setLoader] = useState(false)
+    // const [hide, setHide] = useState(true)
+    const [regColor, setregColor] = useState("blue")
+    const [postColor, setpostColor] = useState("red")
+    const [matchColor, setmatchColor] = useState("green")
+    const [loading, setLoading] = useState(false)
     const [tracks, setTracks] = useState(useSelector(state => state.songs.value))
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const onChangeValue = (e) => {
-
+        setLoading(true)
         fetch("http://localhost:5000/get_song_words", {
             method:"POST",
             credentials:"include",
@@ -31,8 +37,13 @@ export default function Lyrics(){
         }).then(async res => {
             const data = await res.json()
             console.log(data,"LYRICS")
-            setLyrics(data)
+            if(!data["lyric"]){
+                setLyrics({lyric: "Hmm seems like no lyrics were found. Like more songs on your Spotify account and try again!", song: "You because you're our most prized user!"})
+            }else{
+                setLyrics(data)
+            }
             console.log(lyrics)
+            setLoading(false)
         }).catch(error=>{
             console.log(error)
         })
@@ -40,21 +51,39 @@ export default function Lyrics(){
     }
 
     const onStartMatching = (e) => {
-        fetch("http://localhost:5000/get_all_users", {
-            method:"GET",
+        // fetch("http://localhost:5000/get_all_users", {
+        //     method:"GET",
+        //     credentials:"include"
+        // }).then(async res => {
+        //     const data = await res.json()
+        //     console.log("these are all the users")
+        //     console.log(data["allUsers"][0]["name"])
+        //     dispatch(setPotential(data["allUsers"]))
+        //     setUsers(data["allUsers"])
+        //     navigate("/music")
+        // }).catch(error=>{
+        //     console.log(error)
+        // })
+        setLoader(true)
+        fetch("http://localhost:5000/match", {
+            method:"POST",
+            body:JSON.stringify(user_data.user),
             credentials:"include"
         }).then(async res => {
             const data = await res.json()
             console.log("these are all the users")
-            console.log(data["allUsers"][0]["name"])
-            dispatch(setPotential(data["allUsers"]))
-            setUsers(data["allUsers"])
-            navigate("/music")
+            console.log(data["users"])
+            console.log("this is me: ")
+            console.log(user_data.user)
+            //console.log(data["users"][0]["name"])
+            dispatch(setPotential(data["users"]))
+            // setUsers(data["users"])
+            // navigate("/music")
         }).catch(error=>{
             console.log(error)
         })
-            navigate("/music")
-        }
+        //navigate("/music")
+    }
 
     const onPost = (e) => {
         const post_data = {
@@ -88,9 +117,13 @@ export default function Lyrics(){
 
     useEffect(() => {
         if(lyrics.lyric){
-            setHide(false)
+            setregColor("blue")
+            setpostColor("red")
+            setmatchColor("green")
         }else{
-            setHide(true)
+            setregColor("grey")
+            setpostColor("grey")
+            setmatchColor("grey")
         }
     }, [lyrics.lyric]);
 
@@ -99,18 +132,30 @@ export default function Lyrics(){
     }
     return(
         <div>
+            {!matchLoad ?
+            <>
             <h2 className="titleHub">Lyrics Hub!</h2>
             <p className="mainMess"> Here you can choose a one liner lyric which will display to other users of this app. They can heart your lyrics and vice versa as you will be able to scroll through their lyrics too</p>
+            {loading ? 
+            <div className="loader">
+            <ClimbingBoxLoader color={"white"}/>
+            </div>:<div>
             <h5>Lyrics:</h5>
             <p className = "lyrics">{lyrics.lyric}</p>
             <h5>Song Name:</h5>
             <p className="lyrics">{lyrics.song}</p>
-            <h4 className = "regenerate" onClick={onChangeValue}>Regenerate Lyrics</h4>
-            {!hide ? <div>
-            <h4 className = "likeLyric" onClick={(event) => {onPost(event)}}>Show off the Lyric!</h4>
-            <h4 className = "nextPage" onClick={onStartMatching}>Start matching!!</h4></div>:<div></div>
-            }
+            </div>}
+
+            <div className="buttonsYur">
+            <h4 style={{background: regColor}}className = "regenerate" onClick={onChangeValue}>Regenerate Lyrics</h4>
+     
+            <h4 style={{background: postColor}}className = "likeLyric" onClick={(event) => {onPost(event)}}>Show off the Lyric!</h4>
+            <h4 style={{background: matchColor}}className = "nextPage" onClick={onStartMatching}>Start matching!!</h4>
+            </div>
             <Navtab/>
+            </>:
+            <><LoadingMatches/></>
+            }
         </div>
     )
     

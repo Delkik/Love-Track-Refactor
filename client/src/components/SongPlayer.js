@@ -1,12 +1,21 @@
-import SpotifyPlayer from "react-spotify-web-playback"
+import { useCallback, useEffect, useState } from "react"
+import SpotifyPlayer, { CallbackState, STATUS} from "react-spotify-web-playback"
 
-export default function Player({accessToken, trackUri}){
+export default function Player({dip, accessToken, trackUri, duration}){
+    const [pro, setPro] = useState()
+    useEffect((type, ...state) => {
+        console.log("this is the postition of song")
+        //console.log(state.position)
+        console.log(state.position)
+    },[pro])
     if(!accessToken) return null
     return (
         <SpotifyPlayer
             token={accessToken}
-            play={true}
+            autoPlay = {true}
             uris = {trackUri}
+            initialVolume = {dip}
+            callback = {state => {console.log(state.progressMs)}}
             styles={{
                 activeColor: '#fff',
                 bgColor: '#333',

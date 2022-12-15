@@ -28,7 +28,7 @@ function App() {
             <Route path="/settings" element={<Settings/>} />
             <Route path="/music" element={<Music/>} />
             <Route path="/lyrics" element = {<Lyrics/>}/>
-            <Route path="/interests" element = {<NewUser2/>}/>
+            {/* <Route path="/interests" element = {<NewUser2/>}/> */}
           </Routes>
       </Router>
     </div>

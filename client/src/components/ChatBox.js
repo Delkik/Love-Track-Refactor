@@ -11,7 +11,7 @@ let endPoint = "http://127.0.0.1:5000"
 let socket = io.connect("http://127.0.0.1:5000")
 // {socket}
 
-function Chat({name, matchedName, theType, func}) {
+function Chat({name, matchedName, ownerId, matchedId, theType, func}) {
    const navigate = useNavigate()
     const {state} = useLocation();
     const data = state
@@ -57,7 +57,7 @@ function Chat({name, matchedName, theType, func}) {
         socket.emit("message", messageData)
         if(joinedRoom == false){
           console.log("im about to join")
-          socket.emit("join", "1235")
+          socket.emit("join", ownerId+matchedId)
           setJoined(true)
         }
         setMessage("")
@@ -69,20 +69,20 @@ function Chat({name, matchedName, theType, func}) {
     }
 
     const onClickX = () =>{
-      // fetch("http://localhost:5000/addChat", {
-      //       method:"POST",
-      //       credentials:"include",
-      //       body:JSON.stringify({"name":"Justin","history":messages}),
-      //       headers: {
-      //           'Content-Type':'application/json'
-      //       },
-      //     }).then(async res => {
-      //        const data = await res.json()
-      //         console.log(data)
-      //   }).catch(error=>{
-      //       console.log(error)
-      //     })
-      socket.emit("leave", "1235")
+      fetch("http://localhost:5000/addChat", {
+            method:"POST",
+            credentials:"include",
+            body:JSON.stringify({"name":ownerId+matchedId,"history":messages}),
+            headers: {
+                'Content-Type':'application/json'
+            },
+          }).then(async res => {
+             const data = await res.json()
+              console.log(data)
+        }).catch(error=>{
+            console.log(error)
+          })
+      socket.emit("leave", ownerId+matchedId)
       if(theType === "matches"){
         console.log("I am in matches type these tings")
        func(false)

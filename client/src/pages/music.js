@@ -21,10 +21,16 @@ export default function Music(){
     const [tracks, setTracks] = useState(useSelector(state => state.songs.value))
     const [socketI, setSocket] = useState("")
     const [potUsers, setPot] = useState(useSelector(state => state.potentials.value))
-    const [userName, setUsername] = useState("")
+    const [me, setMe] = useState(useSelector(state => state.user.value))
+    const [trackTime, setTime] = useState(tracks[0]["duration"])
+    const [dip, setDip] = useState(1)
+
 
     const onClick = () => {
         setClicked(true)
+        console.log("kgbvijdbf")
+        console.log(me["user"]["name"])
+
         const socket = io("localhost:5000/", {
             transports: ["websocket"],
             cors: {
@@ -34,15 +40,22 @@ export default function Music(){
         setSocket(socket)
     }
     useEffect(() => {
-        console.log("music page tracks")
-        console.log(tracks)
+        // console.log("music page tracks")
+        // console.log(tracks)
+        const interval = setTimeout(() => {
+            navigate("/home",)
+        }, trackTime-500);
+         return () => clearInterval(interval)
+        // if(dip){
+        //     navigate("/home",)
+        // }
     }, [])
     const onClickX = () =>{
         setClicked(false)
         setLeftChat(true)
         navigate("/home",)
-
     }
+
 
     if (Object.keys(user_data).length === 0){
         return <Navigate to="/"/>
@@ -53,8 +66,8 @@ export default function Music(){
         <div>
             {!clicked ? 
             <div className="music-container">
-            <input type="text" placeholder='John...' onChange = {(event) => {setUsername(event.target.value)}}/>
-            <h2 className="music-name">{potUsers[0]["name"]}</h2>
+            {/* <input type="text" placeholder='John...' onChange = {(event) => {setUsername(event.target.value)}}/> */}
+            <h2 className="music-name">{potUsers[0]["name"]}, {potUsers[0]["age"]}</h2>
             <div className="music-albumCover">
                 <img src={tracks[0]['image']} alt="Album cover" className="music-cover"/>
                 <p>Song Name: {tracks[0]['name']}</p>
@@ -72,12 +85,14 @@ export default function Music(){
             :
             <div>
             {/* <Chat socket = {socketI}/> */}
-            <Chat name = {userName} matchedName = "Justin"/>
+            <Chat name = {user_data["user"]["name"]} matchedName = {potUsers[0]["name"]} ownerId = {user_data["user"]["spotify_id"]} matchedId = {potUsers[0]["spotify_id"]} duration = {tracks[0]['duration']}/>
             {/* <img className = "xButton" onClick={() => onClickX()} src={xButton} alt="White Button"/> */}
             </div>
             }
-            <Player accessToken={tokens.accessToken} trackUri={[tracks[0]["uri"]]}/>
 
+            <div style={{visibility: "hidden"}}>
+            <Player dip = {dip} accessToken={tokens.accessToken} trackUri={[tracks[0]["uri"]]} duration = {tracks[0]['duration']}/>
+            </div>
         </div>
     )
 }
