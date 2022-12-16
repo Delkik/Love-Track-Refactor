@@ -4,22 +4,26 @@ import io from "socket.io-client"
 import "../styles/chat.css"
 import Navtab from "../components/Navtab";
 import xButton from "../images/whiteXButton.png"
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../redux/user";
 
 
 let endPoint = "http://127.0.0.1:5000"
 let socket = io.connect("http://127.0.0.1:5000")
 // {socket}
 
-function Chat({name, matchedName, theType, func}) {
-   const navigate = useNavigate()
+function Chat({name, matchedName, ownerId, matchedId, matchedPic, theType, func, history}) {
+    const navigate = useNavigate()
+    let user_data = useSelector(state => state.user.value)
     const {state} = useLocation();
     const data = state
     const [potUser, setPot] = useState(useSelector(state => state.potentials.value))
-    const [messages, setMessages] = useState([{ms:"Hello and Welcome", sender:"Imtiaz"}, {ms:"no stop talking", sender:matchedName}, {ms:"don't tell me what to do", sender:"Imtiaz"}, {ms:"naurrr", sender:matchedName}, {ms:"So when you wanna go out?", sender:"Imtiaz"}, {ms:"You way too gassed up boy", sender:matchedName}])
+    const [messages, setMessages] = useState(history?history:[])
     //const [messages, setMessages] = useState()
     const [message, setMessage] = useState("")
     const [joinedRoom, setJoined] = useState(false);
+    const dispatch = useDispatch()
+
 
     useEffect(() => {
       const socket = io("localhost:5000/", {
@@ -57,7 +61,8 @@ function Chat({name, matchedName, theType, func}) {
         socket.emit("message", messageData)
         if(joinedRoom == false){
           console.log("im about to join")
-          socket.emit("join", "1235")
+          let id = ownerId.localeCompare(matchedId)?ownerId+matchedId:matchedId+ownerId
+          socket.emit("join", id)
           setJoined(true)
         }
         setMessage("")
@@ -69,20 +74,43 @@ function Chat({name, matchedName, theType, func}) {
     }
 
     const onClickX = () =>{
-      // fetch("http://localhost:5000/addChat", {
-      //       method:"POST",
-      //       credentials:"include",
-      //       body:JSON.stringify({"name":"Justin","history":messages}),
-      //       headers: {
-      //           'Content-Type':'application/json'
-      //       },
-      //     }).then(async res => {
-      //        const data = await res.json()
-      //         console.log(data)
-      //   }).catch(error=>{
-      //       console.log(error)
-      //     })
-      socket.emit("leave", "1235")
+      let newData = {
+        ...user_data.user,
+        isActive:false
+      }
+      dispatch(setUser({user: newData}))
+      fetch("http://localhost:5000/update_user", {
+          method: 'PUT',
+          body: JSON.stringify(newData),
+          mode: 'cors',
+      })
+      .then(async res => {
+          const data = await res.json()
+      })
+      .catch(err => {
+          console.log(err)
+      })
+
+      let id = ownerId.localeCompare(matchedId)?ownerId+matchedId:matchedId+ownerId
+      let method = "POST"
+      if(history.length){
+        method = "PUT"
+      }
+      fetch("http://localhost:5000/addChat", {
+            method:method,
+            credentials:"include",
+            body:JSON.stringify({"room_id":id,"history":messages,"name":matchedName, "picture":matchedPic, "preview":messages[messages.length-1]["msg"], "userId":matchedId, "id":ownerId }),
+            headers: {
+                'Content-Type':'application/json'
+            },
+          }).then(async res => {
+             const data = await res.json()
+              console.log(data)
+        }).catch(error=>{
+            console.log(error)
+          })
+
+      socket.emit("leave", id)
       if(theType === "matches"){
         console.log("I am in matches type these tings")
        func(false)
@@ -94,6 +122,8 @@ function Chat({name, matchedName, theType, func}) {
 
   }
 
+  console.log(matchedName)
+  console.log(messages)
     return (
       <div>
         <img className = "xButton" onClick={() => onClickX()} src={xButton} alt="White Button"/>
@@ -101,7 +131,10 @@ function Chat({name, matchedName, theType, func}) {
         <h1 className='nameTitle'>{matchedName}</h1>
         <div className="chatBox">
           {/* {messages.map(msg => (msg.sender === potUser[0]["name"] ? <div className='left'><p className = "left2">{msg.sender} : {msg.ms}</p></div>: <div className='right'><p className = "right2">{msg.sender} : {msg.ms}</p></div>))} */}
-          {messages.map(msg => (msg.sender === matchedName ? <div className='left'><p className = "left2">{msg.sender} : {msg.ms}</p></div>: <div className='right'><p className = "right2">{msg.sender} : {msg.ms}</p></div>))}
+          {messages.map(msg => 
+          
+            (msg.sender === matchedName ? <div className='left'><p className = "left2">{msg.sender} : {msg.ms}</p></div>: <div className='right'><p className = "right2">{msg.sender} : {msg.ms}</p></div>))}
+            
           </div>
           
           <div className='inputField'>
