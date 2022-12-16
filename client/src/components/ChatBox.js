@@ -93,7 +93,7 @@ function Chat({name, matchedName, ownerId, matchedId, matchedPic, theType, func,
 
       let id = ownerId.localeCompare(matchedId)?ownerId+matchedId:matchedId+ownerId
       let method = "POST"
-      if(history.length){
+      if(history){
         method = "PUT"
       }
       fetch("http://localhost:5000/addChat", {
