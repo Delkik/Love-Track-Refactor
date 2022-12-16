@@ -11,8 +11,12 @@ import { setUser } from "../redux/user";
 import ClimbingBoxLoader from "react-spinners/HashLoader"
 import LoadingMatches from "../components/LoadingForMatch";
 
+const TIMER_MAX= 60000
+
 
 export default function Lyrics(){
+    const [timerCount, setCounter] = useState(0)
+    let interval = undefined
     let user_data = useSelector(state => state.user.value)
     let posts = useSelector(state => state.posts.value)
     const [lyrics, setLyrics] = useState({lyric:"", song: ""})
@@ -52,25 +56,22 @@ export default function Lyrics(){
     }
 
     const onStartMatching = (e) => {
-        // fetch("http://localhost:5000/get_all_users", {
-        //     method:"GET",
-        //     credentials:"include"
-        // }).then(async res => {
-        //     const data = await res.json()
-        //     console.log("these are all the users")
-        //     console.log(data["allUsers"][0]["name"])
-        //     dispatch(setPotential(data["allUsers"]))
-        //     setUsers(data["allUsers"])
-        //     navigate("/music")
-        // }).catch(error=>{
-        //     console.log(error)
-        // })
-        setLoader(true)
-        fetch("http://localhost:5000/match", {
+        interval = setInterval(async () => {
+            fetch("http://localhost:5000/match", {
             method:"POST",
             body:JSON.stringify(user_data.user),
             credentials:"include"
         }).then(async res => {
+            let newData = {
+                ...user_data.user,
+                isActive:true
+            }
+            dispatch(setUser({user: newData}))
+            fetch("http://localhost:5000/update_user", {
+                method: 'PUT',
+                body: JSON.stringify(newData),
+                mode: 'cors',
+            })
             const data = await res.json()
             console.log("these are all the users")
             console.log(data["users"])
@@ -81,29 +82,47 @@ export default function Lyrics(){
             // setUsers(data["users"])
             // navigate("/music")
         }).catch(error=>{
-            console.log(error)
+            setCounter(timerCount => timerCount + 10000)
+            
+            console.log(timerCount)
         })
 
-        let newData = {
-            ...user_data.user,
-            isActive:true
-        }
-        dispatch(setUser({user: newData}))
-        fetch("http://localhost:5000/update_user", {
-            method: 'PUT',
-            body: JSON.stringify(newData),
-            mode: 'cors',
-        })
-        .then(async res => {
-            const data = await res.json()
-        })
-        .catch(err => {
-            console.log(err)
-        })
-        console.log("is active update")
-        console.log(user_data)
+        }, 10000)       
+
+        // fetch("http://localhost:5000/update_user", {
+        //     method: 'PUT',
+        //     body: JSON.stringify(newData),
+        //     mode: 'cors',
+        // })
+        // .then(async res => {
+        //     const data = await res.json()
+        // })
+        // .catch(err => {
+        //     console.log(err)
+        // })
+        // console.log("is active update")
+        // console.log(user_data)
         //navigate("/music")
     }
+
+    useEffect(() => {
+        return () => clearInterval(interval)
+    }, [])
+    useEffect(() => {
+        console.log("im the bummy dummy")
+        console.log(timerCount, TIMER_MAX)
+        if(timerCount >= TIMER_MAX){
+            
+            return () => 
+            {
+                alert("No active users try again later!")
+                clearInterval(interval)
+                navigate('/home')
+            }
+
+            
+        }
+    }, [timerCount])
 
     const onPost = (e) => {
         const post_data = {
@@ -136,16 +155,16 @@ export default function Lyrics(){
     }, []);
 
     useEffect(() => {
-        if(lyrics.lyric){
+        if(!loading){
             setregColor("blue")
             setpostColor("red")
-            setmatchColor("green")
+            // setmatchColor("green")
         }else{
             setregColor("grey")
             setpostColor("grey")
-            setmatchColor("grey")
+            // setmatchColor("grey")
         }
-    }, [lyrics.lyric]);
+    }, [loading]);
 
     if (Object.keys(user_data).length === 0){
         return <Navigate to="/"/>
@@ -167,14 +186,34 @@ export default function Lyrics(){
             </div>}
 
             <div className="buttonsYur">
-            <h4 style={{background: regColor}}className = "regenerate" onClick={onChangeValue}>Regenerate Lyrics</h4>
+            <button disabled={loading} style={{background: regColor}}className = "regenerate" onClick={onChangeValue}>Regenerate Lyrics</button>
      
-            <h4 style={{background: postColor}}className = "likeLyric" onClick={(event) => {onPost(event)}}>Show off the Lyric!</h4>
-            <h4 style={{background: matchColor}}className = "nextPage" onClick={onStartMatching}>Start matching!!</h4>
+            <button disabled={loading} style={{background: postColor}}className = "likeLyric" onClick={(event) => {onPost(event)}}>Show off the Lyric!</button>
+            <button style={{background: matchColor}}className = "nextPage" onClick={onStartMatching}>Start matching!!</button>
             </div>
             <Navtab/>
             </>:
-            <><LoadingMatches/></>
+            <>
+            {/* <LoadingMatches/> */}
+                <h2 className="titleHub">Lyrics Hub!</h2>
+                <p className="mainMess"> Here you can choose a one liner lyric which will display to other users of this app. They can heart your lyrics and vice versa as you will be able to scroll through their lyrics too</p>
+                {loading ? 
+                <div className="loader">
+                <ClimbingBoxLoader color={"white"}/>
+                </div>:<div>
+                <h5>Lyrics:</h5>
+                <p className = "lyrics">{lyrics.lyric}</p>
+                <h5>Song Name:</h5>
+                <p className="lyrics">{lyrics.song}</p>
+                </div>}
+
+                <div className="buttonsYur">
+                <button disabled={loading} style={{background: regColor}}className = "regenerate" onClick={onChangeValue}>Regenerate Lyrics</button>
+        
+                <button disabled={loading} style={{background: postColor}}className = "likeLyric" onClick={(event) => {onPost(event)}}>Show off the Lyric!</button>
+                <button style={{background: "grey"}}className = "nextPage">Start matching!!</button>
+                </div>
+            </>
             }
         </div>
     )

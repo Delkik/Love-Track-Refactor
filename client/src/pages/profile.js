@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
@@ -13,7 +13,20 @@ export default function Profile(){
     let user = useSelector(state => state.user.value)
     const [image, setImage] = useState()
     const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const signOut = () => {
+        fetch("http://localhost:5000/sign_out", {
+            method:"GET",
+            credentials: "include"
+        }).then(async res => {
+            const data = await res.json()
+            console.log(data)
+            navigate("/")
+        }).catch(error=> {
+            console.log(error)
+        })
 
+    }
     if (Object.keys(user).length === 0){
         return <Navigate to="/"/>
     }
@@ -108,6 +121,7 @@ export default function Profile(){
                         }
                     </div>
                 </div>
+                <button className="signout" onClick={signOut}>Sign Out</button>
 			</div>
             <Navtab/>
         </div>

@@ -181,14 +181,10 @@ def match():
     user_data.pop('_id', None)
 
     db = DB_CLIENT["main"]
-    bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]},"cluster":user_data["cluster"]},{"_id":0}).limit(1000)
+    bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]},"cluster":user_data["cluster"], "isActive":True},{"_id":0}).limit(1000)
     # print(list(bruh))
-    count = 0
-    for i in bruh:
-        if i["isActive"] == False:
-            bruh.pop(count)
-        count= count+1
-
+    if not len(list(bruh)):
+        raise "No User Found"
     return {"users":list(bruh)}
 
 @app.route("/get_all_users", methods=['GET','POST'])
@@ -258,9 +254,6 @@ def spotify():
     session.clear()
     token_info = sp.get_access_token(code)
 
-    session[TOKEN_INFO] = token_info
-    session.modified = True
-
     return json.dumps(
         {
             "accessToken"   :   token_info["access_token"],
@@ -323,6 +316,14 @@ def like(id):
     db.likes.replace_one({"user":user_id},user)
     db.posts.replace_one({"post_id":id},post)
     return dumps(db.posts.find({}).limit(20))
+
+@app.route('/sign_out')
+@cross_origin(supports_credentials=True)
+def sign_out():
+    print(session, "BEFORE")
+    session.pop("token_info", None)
+    print(session, "AFTERE")
+    return {"msg" : "Signed Out!"}
 
 @app.route("/addChat", methods = ['POST'])
 @cross_origin(supports_credentials=True)

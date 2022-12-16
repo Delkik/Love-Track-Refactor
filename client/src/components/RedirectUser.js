@@ -38,6 +38,7 @@ export default function RedirectUser({code}) {
         })
         .catch(err => {
             setRetry(retry-1)
+            console.log(retry)
         })
     }, [accessToken, retry])
 
@@ -63,6 +64,7 @@ export default function RedirectUser({code}) {
 
     useEffect(() => {
         if (userType !== "premium"  || kretry === 0 || !userData.user){return}
+        console.log("Dgbdgkfbijgfbi")
         fetch("http://localhost:5000/kmeans", {
             method: "POST",
             body: JSON.stringify(userData.user),
@@ -72,6 +74,11 @@ export default function RedirectUser({code}) {
             const data = await res.json();
             let d = {...userData.user, cluster:data["kmeans"]}
             dispatch(setUser({user:d}))
+            fetch("http://localhost:5000/update_user", {
+                method: 'PUT',
+                body: JSON.stringify(d),
+                mode: 'cors',
+            })
         })
         .catch(err => {
             console.log(err)

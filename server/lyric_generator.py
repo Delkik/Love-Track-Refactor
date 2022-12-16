@@ -19,7 +19,11 @@ def lyrics(songName, songArtist):
             if p.find("<") == -1 and p.find("[") == -1:
                 lyrics.append(p)
     index = random.randint(0, len(lyrics)-2)
-    return {"lyric":lyrics[index] + "; " + lyrics[index+1], "song":songName}
+    lyric1 = lyrics[index]
+    if len(lyric1):
+        lyric1 +="; "
+
+    return {"lyric":lyric1 + lyrics[index+1], "song":songName}
 
 # if __name__ == "__main__":
 #     lyrics("hello", "yaar")

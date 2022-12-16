@@ -36,11 +36,11 @@ export default function NewUser2({childToParent}){
             </button>
           <button className="next-button" onClick={() => {
                 console.log(chosenInterests)
-                // childToParent(
-                //     {
-                //         test:2
-                //     },1
-                //     )
+                childToParent(
+                    {
+                        interests:chosenInterests
+                    },1
+                    )
             }}>
                 N E X T
             </button>
