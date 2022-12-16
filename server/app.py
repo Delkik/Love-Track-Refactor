@@ -181,8 +181,10 @@ def match():
     user_data.pop('_id', None)
 
     db = DB_CLIENT["main"]
-    bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]},"cluster":user_data["cluster"]},{"_id":0}).limit(1000)
+    bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]},"cluster":user_data["cluster"], "isActive":True},{"_id":0}).limit(1000)
     # print(list(bruh))
+    if not len(list(bruh)):
+        raise "No User Found"
     return {"users":list(bruh)}
 
 @app.route("/get_all_users", methods=['GET','POST'])
