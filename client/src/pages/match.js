@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { json, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Chat from "../components/ChatBox";
@@ -8,14 +8,23 @@ import "../styles/match.css"
 
 export default function Match(){
     let data = useSelector(state => state.user.value)
-    const [userD, setD]  = useState(useSelector(state => state.user.value))
     const [showChat, setShow] = useState(false)
     const [matchedInfo, setInfo] = useState()
+    const [allChats, setChats] =useState([])
 
-    useEffect(() => {
-        console.log("this is the user data")
-        console.log(userD)
-    }, [])
+    useEffect(()=>{
+        console.log(data)
+        fetch("http://localhost:5000/chats", {
+            method:"POST",
+            body:data.user.spotify_id,
+            credentials:"include"
+          }).then(async res => {
+             const data = await res.json()
+             setChats(data)
+        }).catch(error=>{
+            console.log(error)
+          })    
+        },[])
 
     const checkInfo = (chat) => {
         console.log("i am being clicked")
@@ -36,6 +45,7 @@ export default function Match(){
         {name:"Shostam Barvav", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)",  userId: 146},
         {name:"Justin Williams", picture:"https://i.imgur.com/oyW8sxm.jpg", preview:"DTF? (Down to Fish)",  userId: 147}
     ]
+
     return (
         <div>
             <Navbar/>
@@ -47,8 +57,8 @@ export default function Match(){
                 </div>
                 
                 <div className='chats'>
-                    { users.length ?
-                        users.map((chat, idx) => {
+                    { allChats.length ?
+                        allChats.map((chat, idx) => {
                         return (
                             <div key={idx} className='chat'>
                                 <table>
@@ -58,7 +68,7 @@ export default function Match(){
                                             <td className='name'>{chat.name}</td>
                                         </tr>
                                         <tr>
-                                            <td className='message'>{chat.preview}</td>
+                                            <td className='message'>{chat.history[chat.history.length-1]["ms"]}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -71,7 +81,7 @@ export default function Match(){
                         </div> 
                     }
                 </div> </div>:
-                <div><Chat name = {"Imtiaz"} matchedName = {matchedInfo["name"]} theType = {"matches"} func = {setShow}/></div>}
+                <div><Chat name = {data.user.name} matchedName = {matchedInfo["name"]}  matchedPic = {matchedInfo["picture"]} ownerId = {data.user.spotify_id} theType = {"matches"} func = {setShow} history = {matchedInfo["history"]}/></div>}
             </div>
             <Navtab/>
         </div>

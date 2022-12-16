@@ -19,6 +19,7 @@ export default function Lyrics(){
     let user_data = useSelector(state => state.user.value)
     let posts = useSelector(state => state.posts.value)
     const [lyrics, setLyrics] = useState({lyric:"", song: ""})
+    const [retry, setRetry] = useState(10)
     const [matchLoad, setLoader] = useState(false)
     const [currentUser, setcurrentUser] = useState(useSelector(state => state.user.value))
     const [regColor, setregColor] = useState("blue")
@@ -54,9 +55,11 @@ export default function Lyrics(){
 
     }
 
-    const onStartMatching = (e) => {
-        interval = setInterval(async () => {
-            fetch("http://localhost:5000/match", {
+    useEffect(() =>{
+        if(retry == 0 || !matchLoad){
+            return
+        }
+        fetch("http://localhost:5000/match", {
             method:"POST",
             body:JSON.stringify(user_data.user),
             credentials:"include"
@@ -73,35 +76,42 @@ export default function Lyrics(){
             })
             const data = await res.json()
             console.log("these are all the users")
-            console.log(data["users"])
+            console.log(data["user"])
             console.log("this is me: ")
             console.log(user_data.user)
             //console.log(data["users"][0]["name"])
-            dispatch(setPotential(data["users"]))
+            console.log("lurocs page data")
+            console.log(data)
+            dispatch(setPotential(data["user"]))
+            // navigate('/music')
             // setUsers(data["users"])
-            // navigate("/music")
+            navigate("/music")
         }).catch(error=>{
-            setCounter(timerCount => timerCount + 10000)
-            
-            console.log(timerCount)
+            setRetry(retry-1)            
         })
-
-        }, 10000)       
-
-        // fetch("http://localhost:5000/update_user", {
-        //     method: 'PUT',
-        //     body: JSON.stringify(newData),
-        //     mode: 'cors',
-        // })
-        // .then(async res => {
-        //     const data = await res.json()
-        // })
-        // .catch(err => {
-        //     console.log(err)
-        // })
-        // console.log("is active update")
-        // console.log(user_data)
-        //navigate("/music")
+    }, [retry, matchLoad])
+    const onStartMatching = (e) => {
+        
+        setLoader(true)
+        let newData = {
+            ...user_data.user,
+            isActive:true
+        }
+        dispatch(setUser({user: newData}))
+        fetch("http://localhost:5000/update_user", {
+            method: 'PUT',
+            body: JSON.stringify(newData),
+            mode: 'cors',
+        })
+        .then(async res => {
+            const data = await res.json()
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        console.log("is active update")
+        console.log(user_data)
+        // navigate("/music")
     }
 
     useEffect(() => {
@@ -118,6 +128,7 @@ export default function Lyrics(){
 
             
         }
+        return () => clearInterval(interval)
     }, [timerCount])
 
     const onPost = (e) => {

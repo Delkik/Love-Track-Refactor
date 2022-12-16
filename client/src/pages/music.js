@@ -15,14 +15,17 @@ import social from "../images/social_media_button.png"
 
 export default function Music(){
     let tokens = useSelector(state => state.tokens.value)
-    let user_data = useSelector(state => state.user.value)
+    let me = useSelector(state => state.user.value)
+    let potUsers = useSelector(state => state.potentials.value)
+    let tracks = useSelector(state => state.songs.value)
     const navigate = useNavigate()
     const [clicked, setClicked] = useState(false)
+    const [retry, setRetry] = useState(10)
     const [fav, setFav] = useState(false)
-    const [tracks, setTracks] = useState(useSelector(state => state.songs.value))
+    // const [tracks, setTracks] = useState(useSelector(state => state.songs.value))
     const [socketI, setSocket] = useState("")
-    const [potUsers, setPot] = useState(useSelector(state => state.potentials.value))
-    const [me, setMe] = useState(useSelector(state => state.user.value))
+    // const [potUsers, setPot] = useState(useSelector(state => state.potentials.value))
+    // const [me, setMe] = useState(useSelector(state => state.user.value))
     const [trackTime, setTime] = useState(tracks[0]["duration"])
     const [dip, setDip] = useState(1)
 
@@ -42,11 +45,7 @@ export default function Music(){
     }
 
     const favClick = () => {
-        if (fav){
-            setFav(false)
-        }else{
-            setFav(true)
-        }
+            setFav(true)       
     }
 
     useEffect(() => {
@@ -66,10 +65,10 @@ export default function Music(){
     }
 
 
-    if (Object.keys(user_data).length === 0){
+    if (Object.keys(me).length === 0){
         return <Navigate to="/"/>
     }
-
+    console.log(potUsers)
 
     return(
         <div>
@@ -88,13 +87,12 @@ export default function Music(){
                 className="music-chat" 
                 onClick={() => onClick()}/>
             {/* </Link> */}
-            <img src={rightNext} alt="rightNext" className="music-rightNext"/>
             
             </div>
             :
             <div>
             {/* <Chat socket = {socketI}/> */}
-            <Chat name = {user_data["user"]["name"]} matchedName = {potUsers[0]["name"]} ownerId = {user_data["user"]["spotify_id"]} matchedId = {potUsers[0]["spotify_id"]} duration = {tracks[0]['duration']}/>
+            <Chat name = {me["user"]["name"]} matchedName = {potUsers[0]["name"]} ownerId = {me["user"]["spotify_id"]} matchedId = {potUsers[0]["spotify_id"]} matchedPic = {potUsers[0]["profile_img"]} duration = {tracks[0]['duration']}/>
             {/* <img className = "xButton" onClick={() => onClickX()} src={xButton} alt="White Button"/> */}
             <img onClick = {() => favClick()} className="like" src = {fav ? filled : social} />
             </div>

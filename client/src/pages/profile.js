@@ -102,9 +102,11 @@ export default function Profile(){
                     <div className='profile-interests'>
                         <h3>My Interests</h3>
                         {
-                            interests.map((interest, idx) => {
+                            user.user.interests.length ?
+                            user.user.interests.map((interest, idx) => {
                                 return (<p key={idx}>{interest}</p>)
-                            })
+                            }):
+                            <div>Find some interests!! BORING</div>
                         }
                     </div>
                 </div>

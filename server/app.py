@@ -179,13 +179,17 @@ def match():
     user_data = request.data.decode("utf-8")
     user_data = json.loads(user_data)
     user_data.pop('_id', None)
-
-    db = DB_CLIENT["main"]
+    client = MongoClient(mongo_uri)
+    db = client["main"]  
     bruh = db.accounts.find({"spotify_id":{"$ne":user_data["spotify_id"]},"cluster":user_data["cluster"], "isActive":True},{"_id":0}).limit(1000)
-    # print(list(bruh))
-    if not len(list(bruh)):
-        raise "No User Found"
-    return {"users":list(bruh)}
+    l =[]
+    for i in bruh:
+        l.append(i)
+    print(l)
+    if not len(l):
+        raise Exception("No User Found")
+    return {"user":l}
+
 
 @app.route("/get_all_users", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -303,6 +307,22 @@ def posts():
         posts.insert_one(post_data)
         return {}
 
+@app.route("/chats", methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
+def chats():
+    db = DB_CLIENT["main"]
+    matches = db.matches
+    user_data = request.data.decode("utf-8")
+    print(user_data)
+    
+    m = matches.find({"id":user_data}).limit(20)
+    print(m[0])
+    l = []
+    for i in m:
+        l.append(i)
+    print(l, "l")
+    return dumps(l)
+
 @app.route("/posts/<id>/like", methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def like(id):
@@ -320,14 +340,18 @@ def like(id):
     db.posts.replace_one({"post_id":id},post)
     return dumps(db.posts.find({}).limit(20))
 
-@app.route("/addChat", methods = ['POST'])
+@app.route("/addChat", methods = ['POST', 'PUT'])
 @cross_origin(supports_credentials=True)
 def postChat():
     bdy = request.get_json()
-    client = MongoClient(mongo_uri2)
-    db = client["chatHistory"]
+
+    db = DB_CLIENT["main"]
+    matches = db.matches
     try:
-        db.chats.insert_one({bdy["name"]:bdy["history"]})
+        match_data = request.data.decode("utf-8")
+        match_data = json.loads(match_data)
+
+        matches.replace_one({"id": match_data["id"]},match_data, upsert=True)
         return dumps({"message":"succeeded in updating db"})
     except:
         return dumps({"message":"error with updating to db. please try again"})
